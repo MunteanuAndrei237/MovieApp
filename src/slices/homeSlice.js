@@ -1,12 +1,15 @@
 import {createSlice , createAsyncThunk } from '@reduxjs/toolkit';
+import accessToken from '../accessToken.js';
 const fetch = require('node-fetch');
+
 const homeMoviesUrl = 'https://api.themoviedb.org/3/movie/popular';
 const moovieDetailsUrl = 'https://api.themoviedb.org/3/movie/';
+
 const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NGQ3NGQ0NTRmOTVmOTU3MDliY2QyOWRhMzVkOWE1NyIsInN1YiI6IjY1NmRlMzQ1NGE0YmY2MDEzZDhmNDNkMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.psRlcMIT2Qtn0VesRX43LYqfEE-vFLD7JhPwN4W9uHc'
+    Authorization: accessToken
   }
 };
 let indexMovies = -1
@@ -14,7 +17,6 @@ const fetchMoovieDetailsByIdThunk = createAsyncThunk('home/fetchMoovieDetailsByI
     try {
       const response = await fetch(moovieDetailsUrl + id, options);
       const data = await response.json();
-      console.log('data:', data)
       return { ...data, index: index,detailsFetched:true };
     } catch (error) {
       console.error('error:', error);
@@ -41,6 +43,8 @@ const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async () =
       }
 }
 )
+
+
 
 const homeSlice = createSlice({
     name: 'home',
