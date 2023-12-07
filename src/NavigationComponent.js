@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SelectCategoryComponent from "./SelectCategoryComponent";
 const NavigationComponent = () => {
     return (
         <div>
@@ -9,7 +10,9 @@ const NavigationComponent = () => {
             <li>
             <Link to="/favourites">Favourites</Link>
             </li>
+            
         </ul>
+        <SelectCategoryComponent/>
         </div>
     );
 }

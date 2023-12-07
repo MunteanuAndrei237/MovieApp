@@ -1,21 +1,23 @@
 import './App.css';
 import HomeComponent from './homeComponent.js';
-import {generateTokenThunk , tryValidateTokenThunk} from './slices/userSlice.js';
-import { useEffect, useMemo  } from 'react';
+import {generateTokenThunk , tryValidateTokenThunk } from './slices/userSlice.js';
+import { fetchHomeMoviesThunk } from './slices/loadedMoviesSlice.js';
+import { useEffect  } from 'react';
 import { useDispatch , useSelector} from 'react-redux';
 import { Routes, Route } from "react-router-dom";
 import FavouriesComponent from './FavouritesComponent.js';
 import NavigationComponent from './NavigationComponent.js';
-import { getFavouriteMoviesThunk } from './slices/favouriteSlice.js';
-const checkForTokenActivationInterval=5000;
+import { getFavouriteMoviesThunk } from './slices/loadedMoviesSlice.js';
+import SearchBarComponent from './SearchBarComponent.js';
+import SearchResultComponent from './SearchResultComponent.js';
+const checkForTokenActivationInterval=3500;
 
 function App() {
 
-  const memoizedHomeComponent = useMemo(() => <HomeComponent />, []);
-
+  const dispatch = useDispatch();
+  const loadedMoviesState = useSelector(state => state.loadedMovies);
   const userState = useSelector(state => state.user);
 
-  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(generateTokenThunk());
   }, [])
@@ -38,14 +40,18 @@ function App() {
     }
   },[userState.sessionToken])
 
+
+
   return (
     <div className="App">
-{userState.user !== null ? (<div><p>{userState.user.id}</p>
+{userState.user !== null ? (<div><p>{userState.user.id}</p> <button onClick={()=>console.log(loadedMoviesState.loadedMovies)}>Print</button>
+<SearchBarComponent/>
 <NavigationComponent/> 
   <Routes>
-      <Route path="/"  element={<HomeComponent/>} />
-      <Route path="/home"  element={memoizedHomeComponent} />
-      <Route path="/favourites"  element={<FavouriesComponent/>} />
+      <Route path="/"  element={<FavouriesComponent />} />
+      <Route path="/home"  element={<HomeComponent />} />
+      <Route path="/favourites"  element={<FavouriesComponent />} />
+      <Route path="/search" element={<SearchResultComponent />}/>
       </Routes></div>) : <h1>Please sign in first</h1>
     }     
 

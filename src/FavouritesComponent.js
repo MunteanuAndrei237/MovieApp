@@ -4,24 +4,18 @@ import { useDispatch , useSelector} from "react-redux";
 import MoviePreviewComponent from "./MoviePreviewComponent.js";
 const FavouriesComponent = () => {   
 
-    const dispatch = useDispatch();
-    const favouriteMoviesState = useSelector(state => state.favourite);
-
-    // useEffect(() => {
-    //     if()
-    //     {
-    //         <p>succeeded</p>
-    //     }
-    // }, [favouriteMoviesState.status]);
+    const loadedMovies = useSelector(state => state.loadedMovies);
 
     return (   
-        favouriteMoviesState.status === 'succeeded' ?
-        favouriteMoviesState.favouriteMovies.map((movie) => {
+        loadedMovies.favouritesStatus === 'succeeded' ?
+        loadedMovies.loadedMovies.map((movie) => {
+            
+            if(movie.inFavourites === true)
                 return <div key={movie.id}>
                     <MoviePreviewComponent movie={movie}/>
                     </div>
             })
-        : favouriteMoviesState.status === 'loading' ? <p>loading...</p> : favouriteMoviesState.error
+        : loadedMovies.favouritesStatus === 'loading' ? <p>loading...</p> : loadedMovies.favouritesError
     );
 }
 
