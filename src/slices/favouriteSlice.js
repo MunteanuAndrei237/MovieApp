@@ -14,13 +14,17 @@ const getFavouriteMoviesThunk=createAsyncThunk("/favourite/getFavouriteMoviesThu
       const url = 'https://api.themoviedb.org/3/account/'+getState().user.user.id+ '/favorite/movies?language=en-US&page=1&sort_by=created_at.asc';
       const response = await fetch(url, options);
       const data = await response.json();
-      return data;
+      const newData=data.results.map(movie => {
+        return {...movie,  inFavourites: true}
+      });
+     
+      return newData;
     } catch (error) {
       console.error('Error:', error.message);
       throw error;
     }
   })
-  const addMovieToFavouritesThunk = createAsyncThunk('favourite/addMovieToFavouritesThunk', async (movieId, { getState }) => {
+  const addMovieToFavouritesThunk = createAsyncThunk('favourite/addMovieToFavouritesThunk', async ({ movieId, favouriteState }, { getState }) => {
     try {
     const options = {
         method: 'POST',
@@ -32,14 +36,16 @@ const getFavouriteMoviesThunk=createAsyncThunk("/favourite/getFavouriteMoviesThu
         body: JSON.stringify({
             media_type: 'movie',
             media_id: movieId,
-            favorite: true, // Set to true to mark as favorite, false to remove from favorites
+            favorite: !favouriteState, // Set to true to mark as favorite, false to remove from favorites
           }),
       };
-      console.log(getState().user.user.id,movieId);
+      
       const url = 'https://api.themoviedb.org/3/account/'+getState().user.user.id+ '/favorite';
       const response = await fetch(url, options);
       const data = await response.json();
-      console.log("data",data);
+      
+
+
       return data;
     } catch (error) {
       console.error('Error:', error.message);
@@ -51,19 +57,28 @@ const favouriteSlice = createSlice({
     initialState: {
         status: 'idle',
         error: null,
-        favouriteMovies: []
+        favouriteMovies: [],
+        favouriteIds: []
     },
     reducers: {
-
+      addToFavouritesReducer(state, action) {
+        state.favouriteMovies.push(action.payload);
+      },
+      removeFromFavouritesReducer(state, action) {
+        state.favouriteMovies = state.favouriteMovies.filter(movie => movie.id !== action.payload);
+      },
+      
     },
     extraReducers(builder){
         builder.addCase(getFavouriteMoviesThunk.pending, (state) => {
             state.status = 'loading';
         });
         builder.addCase(getFavouriteMoviesThunk.fulfilled, (state, action) => {
-            console.log(action.payload)
             state.status = 'succeeded';
-            state.favouriteMovies = action.payload;
+            state.favouriteMovies = [...state.favouriteMovies,...action.payload];
+            action.payload.forEach(movie => {
+            state.favouriteIds.push(movie.id);
+            })
         });
         builder.addCase(getFavouriteMoviesThunk.rejected, (state, action) => {
             state.status = 'failed';
@@ -72,5 +87,6 @@ const favouriteSlice = createSlice({
     }
 });
 
+export const {addToFavouritesReducer, removeFromFavouritesReducer } = favouriteSlice.actions;
 export {getFavouriteMoviesThunk , addMovieToFavouritesThunk};
 export default favouriteSlice.reducer;

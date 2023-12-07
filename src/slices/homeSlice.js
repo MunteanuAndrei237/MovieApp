@@ -12,34 +12,40 @@ const options = {
     Authorization: accessToken
   }
 };
-let indexMovies = -1
-const fetchMoovieDetailsByIdThunk = createAsyncThunk('home/fetchMoovieDetailsById', async ({id,index}) => {
+
+const fetchMovieDetailsByIdThunk = createAsyncThunk('home/fetchMoovieDetailsById', async ({id}) => {
     try {
       const response = await fetch(moovieDetailsUrl + id, options);
       const data = await response.json();
-      return { ...data, index: index,detailsFetched:true };
+      return { ...data, detailsFetched:true };
     } catch (error) {
       console.error('error:', error);
       throw error; 
     }
   });
 
-const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async () =>
+const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (_, { getState }) =>
 {
     try {
         const response = await fetch(homeMoviesUrl, options);
         const data = await response.json();
-        const newData = data.results.map((obj) => 
-        ({
-            ...obj,
-            imageFetched: false,
-            detailsFetched: false,
-            index: ++indexMovies,
-          }));
+        const FavouriteMovieIds=getState().favourite.favouriteIds;
+        if(getState().favourite.status === 'succeeded')
+        {
+          const newData = data.results.map((movie) => {
+        if (FavouriteMovieIds.indexOf(movie.id) === -1)
+          return {...movie, detailsFetched: false,inHome:true, inFavourites: false};
+        else
+            return {...movie, detailsFetched: false,inHome:true, inFavourites: true};
+        });
         return newData;
+      }
+      else
+      {
+        return data.results;
+      }
       } catch (error) {
         console.error('error:', error);
-
       }
 }
 )
@@ -51,10 +57,20 @@ const homeSlice = createSlice({
     initialState: {
         status: 'idle',
         error: null,
-        homeMovies:[]
+        homeMovies:[],
     },
     reducers: {
-
+      changeInFavouritesReducer(state, action) {
+        state.homeMovies = state.homeMovies.map(movie => {
+          if (movie.id === action.payload)
+            {
+              console.log(movie);
+              return {...movie, inFavourites: !movie.inFavourites};
+            }
+          else
+            return movie;
+        });
+      }
     },
     extraReducers(builder){
         builder.addCase(fetchHomeMoviesThunk.pending, (state) => {
@@ -62,17 +78,17 @@ const homeSlice = createSlice({
         });
         builder.addCase(fetchHomeMoviesThunk.fulfilled, (state, action) => {
             state.status = 'succeeded';
-            state.homeMovies = action.payload;
+            state.homeMovies = [...state.homeMovies,...action.payload];
         });
         builder.addCase(fetchHomeMoviesThunk.rejected, (state) => {
             state.status = 'failed';
             state.error = 'We encountered an error';
         });
-        builder.addCase(fetchMoovieDetailsByIdThunk.fulfilled, (state, action) => {
-            state.homeMovies[Number(action.payload.index)]={...state.homeMovies[Number(action.payload.index)],...action.payload}
-        });
+        // builder.addCase(fetchMovieDetailsByIdThunk.fulfilled, (state, action) => {
+        //     state.homeMovies[Number(action.payload.index)]={...state.homeMovies[Number(action.payload.index)],...action.payload}
+        // });
     }
 });
-
-export {fetchHomeMoviesThunk , fetchMoovieDetailsByIdThunk};
+export const {changeInFavouritesReducer} = homeSlice.actions;
+export {fetchHomeMoviesThunk , fetchMovieDetailsByIdThunk};
 export default homeSlice.reducer;

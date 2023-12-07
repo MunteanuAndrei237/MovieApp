@@ -6,6 +6,7 @@ import { useDispatch , useSelector} from 'react-redux';
 import { Routes, Route } from "react-router-dom";
 import FavouriesComponent from './FavouritesComponent.js';
 import NavigationComponent from './NavigationComponent.js';
+import { getFavouriteMoviesThunk } from './slices/favouriteSlice.js';
 const checkForTokenActivationInterval=5000;
 
 function App() {
@@ -19,7 +20,10 @@ function App() {
     dispatch(generateTokenThunk());
   }, [])
 
-
+  useEffect(() => {
+    if(userState.user !== null)
+    dispatch(getFavouriteMoviesThunk());
+}, [userState.user]);
 
   useEffect(() => {
     if(userState.sessionToken !== null)// it is null only one and once session started it cannot be modified
