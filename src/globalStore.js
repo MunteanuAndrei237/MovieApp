@@ -1,15 +1,17 @@
 import {configureStore} from '@reduxjs/toolkit';
-import userReducer from './slices/userSlice.js';
+import userSlice from './slices/userSlice.js';
 import loadedMoviesSlice from './slices/loadedMoviesSlice.js';
 import searchSlice from './slices/searchSlice.js';
-import genreSlice from './slices/genres.js';
+import genreSlice from './slices/genresSlice.js';
+import movieDetailsSlice from './slices/movieDetailsSlice.js';
 
 const globalStore = configureStore({
     reducer: {
         loadedMovies: loadedMoviesSlice,
-        user: userReducer,
+        user: userSlice,
         search: searchSlice,
-        genre: genreSlice
+        genre: genreSlice,
+        movieDetails: movieDetailsSlice
     }
 });
 

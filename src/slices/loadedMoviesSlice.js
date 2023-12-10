@@ -54,11 +54,9 @@ const getFavouriteMoviesThunk = createAsyncThunk("/favourite/getFavouriteMoviesT
     const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite/movies?language=en-US&page=1&sort_by=created_at.asc';
     const response = await fetch(url, options);
     const data = await response.json();
-    const newData = data.results.map(movie => {
-      return { ...movie, inFavourites: true }
-    });
+    
 
-    return newData;
+    return data.results;
   } catch (error) {
     console.error('Error:', error.message);
     throw error;
@@ -82,7 +80,7 @@ const addMovieToFavouritesThunk = createAsyncThunk('favourite/addMovieToFavourit
         favorite: !favouriteState, // Set to true to mark as favorite, false to remove from favorites
       }),
     };
-
+    console.log(favouriteState);
     const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite';
     const response = await fetch(url, options);
     const data = await response.json();
@@ -101,13 +99,17 @@ const loadedMoviesSlice = createSlice({
     homeError: null,
     favouritesError: null,
     loadedMovies: [],
-    favouriteIds: [],
     loadedMovieIds:[]
   },
   reducers: {
-    changeFavouriteStateReducer(state, action) {
-      state.loadedMovies = state.loadedMovies.map(movie => movie.id !== action.payload ?  movie : {...movie, inFavourites: !movie.inFavourites});
-    },
+      removeFavouritesLocation(state, action){
+        state.loadedMovies.forEach(loadedMovie => {
+          if(loadedMovie.id === action.payload)
+          {
+            loadedMovie.locations=loadedMovie.locations.filter(location => location !== "favourites");
+          }
+      })
+    }
   },
   extraReducers(builder) {
     builder.addCase(fetchHomeMoviesThunk.pending, (state) => {
@@ -117,15 +119,21 @@ const loadedMoviesSlice = createSlice({
       state.homeStatus = 'succeeded';
       action.payload.forEach(movie => {
         if(state.loadedMovieIds.indexOf(movie.id)===-1)
+            {
+              state.loadedMovies.push({ ...movie, locations: ["home"]});
+              state.loadedMovieIds.push(movie.id);
+            }
+        else
         {
-          if(state.favouriteIds.indexOf(movie.id)===-1)
-        state.loadedMovies.push({ ...movie, inHome: true, inFavourites: false});
-          else
-        state.loadedMovies.push({ ...movie, inHome: true, inFavourites: true });
-        state.loadedMovieIds.push(movie.id);
+          state.loadedMovies.forEach(loadedMovie => {
+            if(loadedMovie.id === movie.id && loadedMovie.locations.indexOf("home") === -1)
+            {
+              loadedMovie.locations.push("home");
+            }
+          })
         }
-      });
-      //state.loadedMovies = [...state.loadedMovies, ...action.payload];
+      })
+      
     });
     builder.addCase(fetchHomeMoviesThunk.rejected, (state) => {
       state.homeStatus = 'failed';
@@ -140,10 +148,21 @@ const loadedMoviesSlice = createSlice({
     builder.addCase(getFavouriteMoviesThunk.fulfilled, (state, action) => {
       
       state.favouritesStatus = 'succeeded';
-      //state.loadedMovies = [...state.loadedMovies, ...action.payload];
       action.payload.forEach(movie => {
-        if(state.favouriteIds.indexOf(movie.id)===-1)
-        state.favouriteIds.push(movie.id);
+        if(state.loadedMovieIds.indexOf(movie.id)===-1)
+            {
+              state.loadedMovies.push({ ...movie, locations: ["favourites"]});
+              state.loadedMovieIds.push(movie.id);
+            }
+        else
+        {
+          state.loadedMovies.forEach(loadedMovie => {
+            if(loadedMovie.id === movie.id && loadedMovie.locations.indexOf("favourites") === -1)
+            {
+              loadedMovie.locations.push("favourites");
+            }
+          })
+        }
       })
     });
     builder.addCase(getFavouriteMoviesThunk.rejected, (state, action) => {
@@ -153,8 +172,7 @@ const loadedMoviesSlice = createSlice({
 
   }
 });
-
-export const { changeFavouriteStateReducer } = loadedMoviesSlice.actions;
+export const {removeFavouritesLocation} = loadedMoviesSlice.actions;
 export { fetchHomeMoviesThunk, fetchMovieDetailsByIdThunk };
 export { getFavouriteMoviesThunk, addMovieToFavouritesThunk };
 export default loadedMoviesSlice.reducer;

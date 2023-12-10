@@ -1,13 +1,21 @@
 import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import accessToken from "../accessToken";
-const getMoviesByGenreThunk = createAsyncThunk("genre/getMoviesByGenreThunk", async (genre) => {
-    const response = await fetch(`https://api.themoviedb.org/3/movie/${genre}?api_key=a9708c7a31d94bf4f964ef44108b2dd3&language=en-US&page=1`);
-    const json = await response.json();
-    return json;
+const getMoviesByGenreThunk = createAsyncThunk("genre/getMoviesByGenreThunk", async (genreId) => {
+const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres='+genreId;
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: accessToken
+}
+};
+console.log(genreId);
+const response = await fetch(url, options);
+const json = await response.json();
+return {results : json.results , genreId : genreId};
 });
 
 const getGenresThunk = createAsyncThunk("genre/getGenresThunk", async () => {
-    console.log("aici")
     const url = 'https://api.themoviedb.org/3/genre/movie/list?language=en';
     const options = {
     method: 'GET',
@@ -18,11 +26,7 @@ const getGenresThunk = createAsyncThunk("genre/getGenresThunk", async () => {
     };
     const response = await fetch(url, options);
     const json = await response.json();
-
-    const newData=json.genres.map((genre) => {
-        return genre.name;
-    });
-    return newData;
+    return json.genres;
 });
 
 const genreSlice = createSlice({
@@ -31,8 +35,9 @@ const genreSlice = createSlice({
         genres: [],
         genresStatus: 'idle',
         genresError: null,
-        selectedGenre: '',
-        movies:[],
+        selectedGenre: 'Search by genre',
+        movies:{},
+        movieIds:[],
         moviesStatus: 'idle',
         moviesError: null
     },
@@ -48,10 +53,32 @@ const genreSlice = createSlice({
         builder.addCase(getGenresThunk.fulfilled, (state, action) => {
             state.genresStatus = 'succeeded';
             state.genres = action.payload;
+            action.payload.forEach(genre => {
+            state.movies[genre.id]=[];
+            });
         });
         builder.addCase(getGenresThunk.rejected, (state, action) => {
             state.genresStatus = 'failed';
             state.genresError = action.error;
+        });
+
+
+        builder.addCase(getMoviesByGenreThunk.pending, (state) => {
+            state.moviesStatus = 'loading';
+        });
+        builder.addCase(getMoviesByGenreThunk.fulfilled, (state, action) => {
+            state.moviesStatus = 'succeeded';
+
+            action.payload.results.forEach(movie => {
+            if(state.movies[action.payload.genreId].indexOf(movie.id)===-1)
+            {
+                state.movies[action.payload.genreId].push(movie);
+                state.movieIds.push(movie.id);
+            }});
+        });
+        builder.addCase(getMoviesByGenreThunk.rejected, (state, action) => {
+            state.moviesStatus = 'failed';
+            state.moviesError = action.error;
         });
     }
 });

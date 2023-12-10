@@ -13,14 +13,7 @@ const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", as
   };
       const response = await fetch(url, options);
       const data = await response.json();
-      const favouriteIds = getState().loadedMovies.favouriteIds;
-      const newData=data.results.map(movie => {
-        if(favouriteIds.indexOf(movie.id)===-1)
-        return { ...movie, inFavourites: false }
-        else
-        return { ...movie, inFavourites: true }
-      });
-      return newData;
+      return data.results;
     }
     catch(error){
       console.error('Error searching:', error.message);

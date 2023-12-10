@@ -15,7 +15,7 @@ const HomeComponent = () => {
     loadedMoviesState.status === 'loading' ? <p>loading...</p> : 
     loadedMoviesState.status === 'error' ? <div><h1>We ecnountered an error</h1><p>{loadedMoviesState.homeError} </p></div> :
     loadedMoviesState.loadedMovies.map((movie) => {
-      if(movie.inHome === true)
+      if(movie.locations.indexOf("home") !== -1)
         return <MoviePreviewComponent movie={movie} key={movie.id}/>  
       }
       )

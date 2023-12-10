@@ -9,8 +9,7 @@ const FavouriesComponent = () => {
     return (   
         loadedMovies.favouritesStatus === 'succeeded' ?
         loadedMovies.loadedMovies.map((movie) => {
-            
-            if(movie.inFavourites === true)
+            if(movie.locations.indexOf("favourites") !== -1)
                 return <div key={movie.id}>
                     <MoviePreviewComponent movie={movie}/>
                     </div>
