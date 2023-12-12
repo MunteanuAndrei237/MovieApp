@@ -1,11 +1,13 @@
-import { addMovieToFavouritesThunk } from "./slices/loadedMoviesSlice.js";
+import { addMovieToFavouritesThunk } from "./slices/favouritesSlice.js";
 import { useDispatch , useSelector } from "react-redux";
-import { getFavouriteMoviesThunk , removeFavouritesLocation } from "./slices/loadedMoviesSlice.js";
+import { removeFavouritesLocation } from "./slices/loadedMoviesSlice.js";
+import { getFavouriteMoviesThunk } from "./slices/favouritesSlice.js";
 import { useNavigate } from "react-router-dom";
 
 const MoviePreviewComponent = ({ movie }) => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const loadedMoviesState = useSelector(state => state.loadedMovies);
+    const favouritesState = useSelector(state => state.favourites);
 
     function changeFavouriteState(movie)
     {
@@ -20,15 +22,16 @@ const MoviePreviewComponent = ({ movie }) => {
             <p>{movie.title}</p> 
             <img src={"https://image.tmdb.org/t/p/w92" + movie.poster_path} />
             <p>Release date {movie.release_date}</p><p>Vote average {movie.vote_average}</p>
-            {loadedMoviesState.favouritesStatus === 'succeeded' ?
+            {favouritesState.favouritesStatus === 'succeeded' ?
             movie.locations.indexOf("favourites") !== -1 ?
             <button onClick={() => { changeFavouriteState(movie) }}>Remove from favourites</button> 
             :
             <button onClick={() => { changeFavouriteState(movie) }}>Add to favourites</button>
-             : loadedMoviesState.favouritesStatus === 'loading' ?
+             : favouritesState.favouritesStatus === 'loading' ?
              <button >Loading favourites</button>
              :
             <button >Could't fetch favourites</button>}
+            <button onClick={() => { navigate('/movie/'+movie.id) }}>See movie details</button>
             </div>
     )
 }

@@ -5,12 +5,12 @@ import MoviePreviewComponent from "./MoviePreviewComponent.js";
 const FavouriesComponent = () => {   
 
     const loadedMovies = useSelector(state => state.loadedMovies);
-
+    const favoritesState = useSelector(state => state.favourites);
     return (   
-        loadedMovies.favouritesStatus === 'succeeded' ?
+        favoritesState.favouritesStatus === 'succeeded' ?
         loadedMovies.loadedMovies.map((movie) => {
-            if(movie.locations.indexOf("favourites") !== -1)
-                return <div key={movie.id}>
+            if(movie.locations.indexOf("favourites") !== -1)  
+                    return <div key={movie.id}>
                     <MoviePreviewComponent movie={movie}/>
                     </div>
             })

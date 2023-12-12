@@ -1,5 +1,6 @@
 import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import accessToken from "../accessToken";
+
 const getMoviesByGenreThunk = createAsyncThunk("genre/getMoviesByGenreThunk", async (genreId) => {
 const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres='+genreId;
 const options = {
@@ -9,10 +10,9 @@ const options = {
     Authorization: accessToken
 }
 };
-console.log(genreId);
 const response = await fetch(url, options);
 const json = await response.json();
-return {results : json.results , genreId : genreId};
+return json;
 });
 
 const getGenresThunk = createAsyncThunk("genre/getGenresThunk", async () => {
@@ -36,10 +36,8 @@ const genreSlice = createSlice({
         genresStatus: 'idle',
         genresError: null,
         selectedGenre: 'Search by genre',
-        movies:{},
-        movieIds:[],
+        movies:[],
         moviesStatus: 'idle',
-        moviesError: null
     },
     reducers: {
         selectGenre(state, action){
@@ -53,9 +51,6 @@ const genreSlice = createSlice({
         builder.addCase(getGenresThunk.fulfilled, (state, action) => {
             state.genresStatus = 'succeeded';
             state.genres = action.payload;
-            action.payload.forEach(genre => {
-            state.movies[genre.id]=[];
-            });
         });
         builder.addCase(getGenresThunk.rejected, (state, action) => {
             state.genresStatus = 'failed';
@@ -68,14 +63,8 @@ const genreSlice = createSlice({
         });
         builder.addCase(getMoviesByGenreThunk.fulfilled, (state, action) => {
             state.moviesStatus = 'succeeded';
-
-            action.payload.results.forEach(movie => {
-            if(state.movies[action.payload.genreId].indexOf(movie.id)===-1)
-            {
-                state.movies[action.payload.genreId].push(movie);
-                state.movieIds.push(movie.id);
-            }});
-        });
+            state.movies=action.payload.results;
+        })
         builder.addCase(getMoviesByGenreThunk.rejected, (state, action) => {
             state.moviesStatus = 'failed';
             state.moviesError = action.error;

@@ -1,178 +1,84 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import accessToken from "../accessToken";
-const fetch = require('node-fetch');
-
-const fetchMovieDetailsByIdThunk = createAsyncThunk('home/fetchMoovieDetailsById', async ({ id }) => {
-  const moovieDetailsUrl = 'https://api.themoviedb.org/3/movie/';
-
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: accessToken
-    }
-  };
-  try {
-    const response = await fetch(moovieDetailsUrl + id, options);
-    const data = await response.json();
-    return { ...data, detailsFetched: true };
-  } catch (error) {
-    console.error('error:', error);
-    throw error;
-  }
-});
-
-const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (_, { getState }) => {
-  const homeMoviesUrl = 'https://api.themoviedb.org/3/movie/popular';
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: accessToken
-    }
-  };
-  try {
-    const response = await fetch(homeMoviesUrl, options);
-    const data = await response.json();
-    return data.results;
-    }
-   catch (error) {
-    console.error('error:', error);
-  }
-}
-)
-
-const getFavouriteMoviesThunk = createAsyncThunk("/favourite/getFavouriteMoviesThunk", async (_, { getState }) => {
-  try {
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: accessToken
-      }
-    };
-    const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite/movies?language=en-US&page=1&sort_by=created_at.asc';
-    const response = await fetch(url, options);
-    const data = await response.json();
-    
-
-    return data.results;
-  } catch (error) {
-    console.error('Error:', error.message);
-    throw error;
-  }
-})
-
-
-
-const addMovieToFavouritesThunk = createAsyncThunk('favourite/addMovieToFavouritesThunk', async ({ movieId, favouriteState }, { getState }) => {
-  try {
-    const options = {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        Authorization: accessToken
-      },
-      body: JSON.stringify({
-        media_type: 'movie',
-        media_id: movieId,
-        favorite: !favouriteState, // Set to true to mark as favorite, false to remove from favorites
-      }),
-    };
-    console.log(favouriteState);
-    const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite';
-    const response = await fetch(url, options);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error:', error.message);
-    throw error;
-  }
-})
+import { createSlice } from "@reduxjs/toolkit";
 
 const loadedMoviesSlice = createSlice({
   name: 'loadedMovies',
   initialState: {
-    favouritesStatus: 'idle',
-    homeStatus: 'idle',
-    homeError: null,
-    favouritesError: null,
     loadedMovies: [],
-    loadedMovieIds:[]
+    loadedMovieIds: [],
   },
   reducers: {
-      removeFavouritesLocation(state, action){
-        state.loadedMovies.forEach(loadedMovie => {
-          if(loadedMovie.id === action.payload)
-          {
-            loadedMovie.locations=loadedMovie.locations.filter(location => location !== "favourites");
-          }
+    removeFavouritesLocation(state, action) {
+      state.loadedMovies.forEach(loadedMovie => {
+        if (loadedMovie.id === action.payload) {
+          loadedMovie.locations = loadedMovie.locations.filter(location => location !== "favourites");
+        }
       })
+    },
+    addLoadedMovie(state, action) {
+      const movies = action.payload.movies;
+      if (action.payload.useTerm === true)
+        var location = "term=" + action.payload.location;
+      else
+         location = action.payload.location;
+      movies.forEach(movie => {
+        if (state.loadedMovieIds.indexOf(movie.id) === -1) {
+          state.loadedMovies.push({ ...movie, locations: [location] });
+          state.loadedMovieIds.push(movie.id);
+        } else {
+          state.loadedMovies.forEach((loadedMovie) => {
+            if (loadedMovie.id === movie.id && loadedMovie.locations.indexOf(location) === -1) {
+              loadedMovie.locations.push(location);
+            }
+          });
+        }
+      });
+    },
+    addEmptyMovie(state, action) {
+      const id = action.payload.id;
+      state.loadedMovies.push({ id: id, locations: [] });
+      state.loadedMovieIds.push(id);
+    },
+    addMovieDetails(state, action) {
+      const id = action.payload.id;
+      const movieDetails = action.payload.details;
+      state.loadedMovies.forEach((loadedMovie) => {
+        if (loadedMovie.id === id) {
+          loadedMovie.details = movieDetails;
+        }
+      });
+    },
+    addMovieCredits(state, action) {
+      const id = action.payload.id;
+      const movieCredits = action.payload.credits;
+      state.loadedMovies.forEach((loadedMovie) => {
+        if (loadedMovie.id === id) {
+          loadedMovie.credits = movieCredits;
+        }
+      });
+
+    },
+    addMovieImages(state, action) {
+      const id = action.payload.id;
+      const movieImages = action.payload.images;
+      state.loadedMovies.forEach((loadedMovie) => {
+        if (loadedMovie.id === id) {
+          loadedMovie.images = movieImages;
+        }
+      });
+
+    },
+    addMovieReviews(state, action) {
+      const id = action.payload.id;
+      const movieReviews = action.payload.reviews;
+      state.loadedMovies.forEach((loadedMovie) => {
+        if (loadedMovie.id === id) {
+          loadedMovie.reviews = movieReviews;
+        }
+
+      });
     }
   },
-  extraReducers(builder) {
-    builder.addCase(fetchHomeMoviesThunk.pending, (state) => {
-      state.homeStatus = 'loading';
-    });
-    builder.addCase(fetchHomeMoviesThunk.fulfilled, (state, action) => {
-      state.homeStatus = 'succeeded';
-      action.payload.forEach(movie => {
-        if(state.loadedMovieIds.indexOf(movie.id)===-1)
-            {
-              state.loadedMovies.push({ ...movie, locations: ["home"]});
-              state.loadedMovieIds.push(movie.id);
-            }
-        else
-        {
-          state.loadedMovies.forEach(loadedMovie => {
-            if(loadedMovie.id === movie.id && loadedMovie.locations.indexOf("home") === -1)
-            {
-              loadedMovie.locations.push("home");
-            }
-          })
-        }
-      })
-      
-    });
-    builder.addCase(fetchHomeMoviesThunk.rejected, (state) => {
-      state.homeStatus = 'failed';
-      state.homeError = 'We encountered an error';
-    });
 
-
-
-    builder.addCase(getFavouriteMoviesThunk.pending, (state) => {
-      state.favouritesStatus = 'loading';
-    });
-    builder.addCase(getFavouriteMoviesThunk.fulfilled, (state, action) => {
-      
-      state.favouritesStatus = 'succeeded';
-      action.payload.forEach(movie => {
-        if(state.loadedMovieIds.indexOf(movie.id)===-1)
-            {
-              state.loadedMovies.push({ ...movie, locations: ["favourites"]});
-              state.loadedMovieIds.push(movie.id);
-            }
-        else
-        {
-          state.loadedMovies.forEach(loadedMovie => {
-            if(loadedMovie.id === movie.id && loadedMovie.locations.indexOf("favourites") === -1)
-            {
-              loadedMovie.locations.push("favourites");
-            }
-          })
-        }
-      })
-    });
-    builder.addCase(getFavouriteMoviesThunk.rejected, (state, action) => {
-      state.favouritesStatus = 'failed';
-      state.favouritesError = action.error;
-    });
-
-  }
 });
-export const {removeFavouritesLocation} = loadedMoviesSlice.actions;
-export { fetchHomeMoviesThunk, fetchMovieDetailsByIdThunk };
-export { getFavouriteMoviesThunk, addMovieToFavouritesThunk };
+export const { removeFavouritesLocation, addLoadedMovie, addMovieCredits, addMovieDetails, addMovieImages, addMovieReviews, addEmptyMovie } = loadedMoviesSlice.actions;
 export default loadedMoviesSlice.reducer;

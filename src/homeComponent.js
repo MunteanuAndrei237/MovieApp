@@ -1,26 +1,43 @@
 import { useEffect } from "react";
-import { fetchHomeMoviesThunk , fetchMovieDetailsByIdThunk } from './slices/loadedMoviesSlice.js';
+import { fetchHomeMoviesThunk  } from './slices/homeSlice.js';
 import { useSelector, useDispatch } from "react-redux";
+import { addLoadedMovie } from "./slices/loadedMoviesSlice.js";
 import MoviePreviewComponent from "./MoviePreviewComponent.js";
+
 const HomeComponent = () => {
-  
+
+
+  const homeSliceState = useSelector(state => state.home);
   const loadedMoviesState = useSelector(state => state.loadedMovies);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    if(loadedMoviesState.favouritesStatus === "succeeded" || loadedMoviesState.favouritesStatus === "rejected")
-      dispatch(fetchHomeMoviesThunk());
-  }, [dispatch,loadedMoviesState.favouritesStatus]);
+      dispatch(fetchHomeMoviesThunk(1));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if(homeSliceState.homeStatus === "succeeded")
+      {
+        dispatch(addLoadedMovie({movies:homeSliceState.homeMovies,location:"home"}));
+      }
+  }, [dispatch,homeSliceState.homeStatus]);
+
 
   return (
-    loadedMoviesState.status === 'loading' ? <p>loading...</p> : 
-    loadedMoviesState.status === 'error' ? <div><h1>We ecnountered an error</h1><p>{loadedMoviesState.homeError} </p></div> :
-    loadedMoviesState.loadedMovies.map((movie) => {
+    <div>
+    {loadedMoviesState.loadedMovies.map((movie) => {
+      
       if(movie.locations.indexOf("home") !== -1)
         return <MoviePreviewComponent movie={movie} key={movie.id}/>  
-      }
+        }
       )
-  )
-
+      }
+    {homeSliceState.homeStatus === 'loading' ? <p>loading...</p> : 
+    homeSliceState.homeStatus === 'error' ? <div><h1>We ecnountered an error</h1><p>{homeSliceState.homeError} </p></div> :
+    null}
+      
+   </div>
+  );
 }
 
 export default HomeComponent;

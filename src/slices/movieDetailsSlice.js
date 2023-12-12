@@ -73,9 +73,9 @@ const movieDetailsSlice = createSlice({
         movieImages: {},
         movieImagesStatus: 'idle',
         movieImagesError: null,
-        movieVideos: {},
-        movieVideosStatus: 'idle',
-        movieVideosError: null
+        movieReviews: {},
+        movieReviewsStatus: 'idle',
+        movieReviewsError: null
     },
     reducers: {
     },
@@ -105,15 +105,15 @@ const movieDetailsSlice = createSlice({
         });
     
         builder.addCase(fetchMovieReviewsByIdThunk.pending, (state) => {
-        state.movieVideosStatus = 'loading';
+        state.movieReviewsStatus = 'loading';
         });
         builder.addCase(fetchMovieReviewsByIdThunk.fulfilled, (state, action) => {
-        state.movieVideosStatus = 'succeeded';
-        state.movieVideos = action.payload.results;
+        state.movieReviewsStatus = 'succeeded';
+        state.movieReviews = action.payload.results;
         });
         builder.addCase(fetchMovieReviewsByIdThunk.rejected, (state, action) => {
-        state.movieVideosStatus = 'failed';
-        state.movieVideosError = action.error;
+        state.movieReviewsStatus = 'failed';
+        state.movieReviewsError = action.error;
         });
     
         builder.addCase(fetchMovieDetailsByIdThunk.pending, (state) => {
@@ -122,6 +122,10 @@ const movieDetailsSlice = createSlice({
         builder.addCase(fetchMovieDetailsByIdThunk.fulfilled, (state, action) => {
         state.movieDetailsStatus = 'succeeded';
         state.movieDetails = action.payload;
+        });
+        builder.addCase(fetchMovieDetailsByIdThunk.rejected, (state, action) => {
+        state.movieDetailsStatus = 'failed';
+        state.movieDetailsError = action.error;
         });
     }});
 

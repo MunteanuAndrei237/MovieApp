@@ -1,7 +1,7 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit";
 import accessToken from "../accessToken";
 
-const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", async ( term ,{ getState }) => {
+const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", async ( term ) => {
     try{
   const url = 'https://api.themoviedb.org/3/search/movie?query='+ term +'&include_adult=false&language=en-US&page=1';
   const options = {
@@ -13,7 +13,7 @@ const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", as
   };
       const response = await fetch(url, options);
       const data = await response.json();
-      return data.results;
+      return data;
     }
     catch(error){
       console.error('Error searching:', error.message);
@@ -24,10 +24,10 @@ const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", as
 const searchSlice = createSlice({   
     name: "search",
     initialState: {
-        searchTerm: '',
-        movies: [],
-        status: 'idle',
-        error: null
+        searchTerm:'',
+        searchStatus: 'idle',
+        searchError: null,
+        searchMovies:[]
     },
     reducers: {
         changeSearchTerm(state, action){
@@ -36,16 +36,15 @@ const searchSlice = createSlice({
     },
     extraReducers(builder) {
         builder.addCase(getMoviesByTermThunk.pending, (state) => {
-            state.status = 'loading';
+            state.searchStatus = 'loading';
         });
         builder.addCase(getMoviesByTermThunk.fulfilled, (state, action) => {
-          console.log(action.payload)
-            state.status = 'succeeded';
-            state.movies = action.payload;
+            state.searchStatus = 'succeeded';
+            state.searchMovies = action.payload.results;
         });
         builder.addCase(getMoviesByTermThunk.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.error.message;
+            state.searchStatus = 'failed';
+            state.searchError = action.error.message;
         });
     }
 });

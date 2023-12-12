@@ -11,9 +11,8 @@ const SelectGenreComponent = () =>
     const genreState = useSelector(state => state.genre);
     const loadedMoviesState = useSelector(state => state.loadedMovies);
     useEffect(() => {
-        if(loadedMoviesState.favouritesStatus === "succeeded" || loadedMoviesState.favouritesStatus === "rejected")
           dispatch(getGenresThunk());
-      }, [dispatch,loadedMoviesState.favouritesStatus]);
+      }, [dispatch]);
     return (
     genreState.genresStatus === 'loading' ? <select>
         <option value="default" disabled>Loading genres...</option>
@@ -24,7 +23,7 @@ const SelectGenreComponent = () =>
 </select>  :
     genreState.genresStatus === 'succeeded' ? <select id="genre" value={genreState.selectedGenre} onChange={e => {
       dispatch(selectGenre(e.target.value))
-      dispatch(getMoviesByGenreThunk(e.target.value))
+      
       navigate('/genres/' + e.target.value);
       }}>
     <option value="default" disabled>Select a genre</option>
