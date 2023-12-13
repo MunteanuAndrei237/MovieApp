@@ -1,26 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import accessToken from "../accessToken";
+import getOptions from "../assets/getOptions";
 const fetch = require('node-fetch');
 
-const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (page) => {
-  console.log(page);
-  const homeMoviesUrl = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page='+page;
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: accessToken
-    }
-  };
+const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (_ , { getState}) => {
+  if(getState().home.homePage <= getState().home.homeTotalPages)
+  {
+  const homeMoviesUrl = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=' + getState().home.homePage;
+  const options = getOptions;
   try {
     const response = await fetch(homeMoviesUrl, options);
     const data = await response.json();
-    return data.results;
+    if(getState().home.homePage===1)
+      return {results:data.results,totalPages:data.total_pages};
+    else
+      return data.results;
     }
    catch (error) {
     console.error('error:', error);
+    throw error;
   }
-}
+}}
 )
 
 const homeSlice = createSlice({
@@ -29,6 +28,8 @@ const homeSlice = createSlice({
     homeMovies:[],
     homeStatus: 'idle',
     homeError: null,
+    homePage:1,
+    homeTotalPages: 100
   },
   reducers: {
 
@@ -39,11 +40,19 @@ const homeSlice = createSlice({
     });
     builder.addCase(fetchHomeMoviesThunk.fulfilled, (state, action) => {
       state.homeStatus = 'succeeded';
-      state.homeMovies = action.payload;
+      if(state.homePage===1)
+      {
+        
+        state.homeTotalPages = action.payload.totalPages;
+        state.homeMovies = action.payload.results;
+      }
+      else
+        state.homeMovies = action.payload;
+        state.homePage++;
     });
-    builder.addCase(fetchHomeMoviesThunk.rejected, (state) => {
+    builder.addCase(fetchHomeMoviesThunk.rejected, (state, action) => {
       state.homeStatus = 'failed';
-      state.homeError = 'We encountered an error';
+      state.homeError = action.error.message;
     });
   }
 });

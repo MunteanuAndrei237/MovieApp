@@ -1,12 +1,12 @@
-import {fetchMovieDetailsByIdThunk, fetchMovieCreditsByIdThunk, fetchMovieImagesByIdThunk, fetchMovieReviewsByIdThunk} from './slices/movieDetailsSlice';
+import {fetchMovieDetailsByIdThunk, fetchMovieCreditsByIdThunk, fetchMovieImagesByIdThunk, fetchMovieReviewsByIdThunk} from '../slices/detailsSlice';
 import { useParams } from 'react-router-dom';
 import { useDispatch , useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { addMovieCredits ,addMovieDetails ,addMovieImages ,addMovieReviews , addEmptyMovie} from './slices/loadedMoviesSlice';
+import { addMovieCredits ,addMovieDetails ,addMovieImages ,addMovieReviews , addEmptyMovie} from '../slices/loadedSlice';
 const MovieDetailsComponent = () => {
 
     const dispatch = useDispatch();
-    const movieDetailsState = useSelector(state => state.movieDetails);
+    const movieDetailsState = useSelector(state => state.details);
     const loadedMoviesState = useSelector(state => state.loadedMovies);
     const movieId=Number(useParams().movieId);
         useEffect(() => {
@@ -61,7 +61,7 @@ const MovieDetailsComponent = () => {
     return (
         <div>
             {movieDetailsState.movieDetailsStatus === 'loading' ? <p>loading...</p> :
-            movieDetailsState.movieDetailsStatus === 'error' ?
+            movieDetailsState.movieDetailsStatus === 'failed' ?
             <div>
                 <h1>We ecnountered an error</h1>
                 <p>{movieDetailsState.movieDetailsError} </p>
@@ -75,7 +75,7 @@ const MovieDetailsComponent = () => {
                        <p>{movie.details.budget}</p>
                     )}}) : null  }
             {movieDetailsState.movieCreditsStatus === 'loading' ? <p>loading...</p> :
-            movieDetailsState.movieCreditsStatus === 'error' ?
+            movieDetailsState.movieCreditsStatus === 'failed' ?
             <div>
                 <h1>We ecnountered an error</h1>
                 <p>{movieDetailsState.movieCreditsError} </p>
@@ -94,7 +94,7 @@ const MovieDetailsComponent = () => {
                         )})
                     }}) : null  }
             {movieDetailsState.movieImagesStatus === 'loading' ? <p>loading...</p> :
-            movieDetailsState.movieImagesStatus === 'error' ?
+            movieDetailsState.movieImagesStatus === 'failed' ?
             <div>
                 <h1>We ecnountered an error</h1>
                 <p>{movieDetailsState.movieImagesError} </p>
@@ -111,7 +111,7 @@ const MovieDetailsComponent = () => {
                         })
                     }}) : null }
             {movieDetailsState.movieReviewsStatus === 'loading' ? <p>loading...</p> :
-            movieDetailsState.movieReviewsStatus === 'error' ?
+            movieDetailsState.movieReviewsStatus === 'failed' ?
             <div>
                 <h1>We ecnountered an error</h1>
                 <p>{movieDetailsState.movieReviewsError} </p>

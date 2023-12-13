@@ -1,11 +1,12 @@
-import { useEffect } from "react";
-
-import { useDispatch , useSelector} from "react-redux";
+import {  useSelector} from "react-redux";
 import MoviePreviewComponent from "./MoviePreviewComponent.js";
+
+
 const FavouriesComponent = () => {   
 
     const loadedMovies = useSelector(state => state.loadedMovies);
     const favoritesState = useSelector(state => state.favourites);
+    
     return (   
         favoritesState.favouritesStatus === 'succeeded' ?
         loadedMovies.loadedMovies.map((movie) => {

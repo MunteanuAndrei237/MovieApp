@@ -1,7 +1,6 @@
-import { addMovieToFavouritesThunk } from "./slices/favouritesSlice.js";
+import { addMovieToFavouritesThunk } from "../slices/favouritesSlice.js";
 import { useDispatch , useSelector } from "react-redux";
-import { removeFavouritesLocation } from "./slices/loadedMoviesSlice.js";
-import { getFavouriteMoviesThunk } from "./slices/favouritesSlice.js";
+import { changeFavouritesLocation } from "../slices/loadedSlice.js";
 import { useNavigate } from "react-router-dom";
 
 const MoviePreviewComponent = ({ movie }) => {
@@ -12,8 +11,7 @@ const MoviePreviewComponent = ({ movie }) => {
     function changeFavouriteState(movie)
     {
         dispatch(addMovieToFavouritesThunk({ movieId: movie.id,favouriteState:movie.locations.indexOf("favourites") !== -1}))
-        .then(()=>{dispatch(getFavouriteMoviesThunk())})
-        .then(()=>dispatch(removeFavouritesLocation(movie.id)))
+        .then(()=>dispatch(changeFavouritesLocation(movie.id)))
     }
     
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch , useSelector } from "react-redux";
-import { changeSearchTerm } from "./slices/searchSlice.js";
+import { changeSearchTerm } from "../slices/searchSlice.js";
 import { useNavigate  } from 'react-router-dom';
 const waitingTime = 1000;
 

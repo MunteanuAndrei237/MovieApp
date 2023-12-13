@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import SelectCategoryComponent from "./GenreSelectComponent";
+import SelectCategoryComponent from "./GenreSelectComponent.js";
 const NavigationComponent = () => {
     return (
         <div>

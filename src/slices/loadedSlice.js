@@ -7,10 +7,13 @@ const loadedMoviesSlice = createSlice({
     loadedMovieIds: [],
   },
   reducers: {
-    removeFavouritesLocation(state, action) {
+    changeFavouritesLocation(state, action) {
       state.loadedMovies.forEach(loadedMovie => {
         if (loadedMovie.id === action.payload) {
-          loadedMovie.locations = loadedMovie.locations.filter(location => location !== "favourites");
+          if(loadedMovie.locations.indexOf("favourites") === -1)
+            loadedMovie.locations.push("favourites");
+          else
+            loadedMovie.locations = loadedMovie.locations.filter(location => location !== "favourites");
         }
       })
     },
@@ -80,5 +83,5 @@ const loadedMoviesSlice = createSlice({
   },
 
 });
-export const { removeFavouritesLocation, addLoadedMovie, addMovieCredits, addMovieDetails, addMovieImages, addMovieReviews, addEmptyMovie } = loadedMoviesSlice.actions;
+export const { changeFavouritesLocation, addLoadedMovie, addMovieCredits, addMovieDetails, addMovieImages, addMovieReviews, addEmptyMovie } = loadedMoviesSlice.actions;
 export default loadedMoviesSlice.reducer;

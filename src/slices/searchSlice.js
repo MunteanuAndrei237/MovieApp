@@ -1,25 +1,23 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit";
-import accessToken from "../accessToken";
-
-const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", async ( term ) => {
-    try{
-  const url = 'https://api.themoviedb.org/3/search/movie?query='+ term +'&include_adult=false&language=en-US&page=1';
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: accessToken
-    }
-  };
+import getOptions from "../assets/getOptions";
+const getMoviesByTermThunk = createAsyncThunk("/search/getMoviesByTermThunk", async ( term , {getState} ) => {
+  if(getState().search.searchTotalPages[term]=== undefined || getState().search.searchPage[term] <= getState().search.searchTotalPages[term])
+    {
+      try{
+    const url = 'https://api.themoviedb.org/3/search/movie?query='+ term +'&include_adult=false&language=en-US&page=' + ((getState().search.searchPage[term] === undefined) ? 1 : (getState().search.searchPage[term]));
+    const options = getOptions;
       const response = await fetch(url, options);
       const data = await response.json();
-      return data;
+      if(getState().search.searchPage[term]=== undefined)
+      return {results:data.results,totalPages:data.total_pages,term:term};
+    else
+      return {results:data.results,term:term}
     }
     catch(error){
       console.error('Error searching:', error.message);
       throw error;
     }
-  });
+  }});
 
 const searchSlice = createSlice({   
     name: "search",
@@ -27,7 +25,9 @@ const searchSlice = createSlice({
         searchTerm:'',
         searchStatus: 'idle',
         searchError: null,
-        searchMovies:[]
+        searchMovies:[],
+        searchPage:{},
+        searchTotalPages: {}
     },
     reducers: {
         changeSearchTerm(state, action){
@@ -40,7 +40,15 @@ const searchSlice = createSlice({
         });
         builder.addCase(getMoviesByTermThunk.fulfilled, (state, action) => {
             state.searchStatus = 'succeeded';
-            state.searchMovies = action.payload.results;
+            if(state.searchPage[action.payload.term]=== undefined)
+            {
+                state.searchTotalPages[action.payload.term] = action.payload.totalPages;
+                state.searchMovies = action.payload.results;
+                state.searchPage[action.payload.term] = 1;
+            }
+            else
+                state.searchMovies = action.payload.results;
+            state.searchPage[action.payload.term]++;
         });
         builder.addCase(getMoviesByTermThunk.rejected, (state, action) => {
             state.searchStatus = 'failed';

@@ -1,15 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import accessToken from "../accessToken";
+import accessToken from "../assets/accessToken";
+import getOptions from "../assets/getOptions"; 
 const fetch = require('node-fetch');
 
 
-const options = {
-    method: 'GET',
-    headers: {
-        accept: 'application/json',
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTcwOGM3YTMxZDk0YmY0Zjk2NGVmNDQxMDhiMmRkMyIsInN1YiI6IjY1NmRlMzQ1NGE0YmY2MDEzZDhmNDNkMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.l5DSaGslV70EwmBHF2yn3-nBEU-2OjSlXgPcSuFPKU4'
-    }
-};
+const options = getOptions;
 
 const generateTokenUrl = "https://api.themoviedb.org/3/authentication/token/new";
 const accountDetailsUrl = 'https://api.themoviedb.org/3/account';

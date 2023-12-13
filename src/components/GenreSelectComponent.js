@@ -1,15 +1,13 @@
 import { useDispatch , useSelector } from "react-redux";
-import { selectGenre } from "./slices/genresSlice.js";
-import { getGenresThunk } from "./slices/genresSlice.js";
+import { getGenresThunk } from "../slices/genresSlice.js";
 import { useEffect } from "react";
-import { getMoviesByGenreThunk } from "./slices/genresSlice.js";
 import { useNavigate } from "react-router-dom";
+
 const SelectGenreComponent = () =>
 {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const genreState = useSelector(state => state.genre);
-    const loadedMoviesState = useSelector(state => state.loadedMovies);
     useEffect(() => {
           dispatch(getGenresThunk());
       }, [dispatch]);
@@ -18,12 +16,10 @@ const SelectGenreComponent = () =>
         <option value="default" disabled>Loading genres...</option>
     </select> :
     
-    genreState.genresStatus === 'error' ? <select>
+    genreState.genresStatus === 'failed' ? <select>
     <option value="default" disabled>Error fetching genres</option>
 </select>  :
-    genreState.genresStatus === 'succeeded' ? <select id="genre" value={genreState.selectedGenre} onChange={e => {
-      dispatch(selectGenre(e.target.value))
-      
+    genreState.genresStatus === 'succeeded' ? <select id="genre" value={genreState.selectedGenre} onChange={e => {      
       navigate('/genres/' + e.target.value);
       }}>
     <option value="default" disabled>Select a genre</option>

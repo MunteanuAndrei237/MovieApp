@@ -1,68 +1,41 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import accessToken from "../accessToken";
+import getOptions from "../assets/getOptions";
 const fetch = require('node-fetch');
 
 const fetchMovieCreditsByIdThunk = createAsyncThunk('home/fetchMovieCreditsById', async (movieId) => {
 const url = 'https://api.themoviedb.org/3/movie/'+movieId+'/credits?language=en-US';
-const options = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: accessToken
-  }
-};
-
+const options = getOptions;
 const response = await fetch(url, options)
 const json = await response.json();
 return json;
+
 });
 const fetchMovieImagesByIdThunk = createAsyncThunk('home/fetchMovieImagesById', async (movieId) => {
 const url = 'https://api.themoviedb.org/3/movie/'+movieId+'/images';
-const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: accessToken
-    }
-  };
-  
-  const response = await fetch(url, options)
-  const json = await response.json();
-  const newData = json.backdrops.map(image => {
+const options = getOptions;
+const response = await fetch(url, options)
+const json = await response.json();
+const newData = json.backdrops.map(image => {
     return image.file_path 
-  });
+});
   return newData;
 });
 const fetchMovieReviewsByIdThunk = createAsyncThunk('home/fetchMovieReviewsById', async (movieId) => {
 const url = 'https://api.themoviedb.org/3/movie/'+movieId+'/reviews';
-const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: accessToken
-    }
-  };
-  
-  const response = await fetch(url, options)
-  const json = await response.json();
-  return json;
+const options = getOptions;
+const response = await fetch(url, options)
+const json = await response.json();
+return json;
 });
 const fetchMovieDetailsByIdThunk = createAsyncThunk('home/fetchMoovieDetailsById', async (movieId) => {
-    const url = 'https://api.themoviedb.org/3/movie/'+movieId;
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: accessToken
-        }
-      };
-      
-      const response = await fetch(url, options)
-      const json = await response.json();
-      return json;
-    });
-const movieDetailsSlice = createSlice({
-    name: "movieDetails",
+const url = 'https://api.themoviedb.org/3/movie/'+movieId;
+const options = getOptions;
+const response = await fetch(url, options)
+const json = await response.json();
+return json;
+});
+const detailsSlice = createSlice({
+    name: "details",
     initialState: {
         movieDetails: {},
         movieDetailsStatus: 'idle',
@@ -130,5 +103,5 @@ const movieDetailsSlice = createSlice({
     }});
 
 export { fetchMovieDetailsByIdThunk, fetchMovieCreditsByIdThunk, fetchMovieImagesByIdThunk, fetchMovieReviewsByIdThunk};
-export default movieDetailsSlice.reducer;
+export default detailsSlice.reducer;
 
