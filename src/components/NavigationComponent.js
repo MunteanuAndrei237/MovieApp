@@ -1,18 +1,14 @@
-import { Link } from "react-router-dom";
 import SelectCategoryComponent from "./GenreSelectComponent.js";
+import { useNavigate } from "react-router-dom";
+import '../css/navigation.css';
+
 const NavigationComponent = () => {
+    const navigate = useNavigate();
     return (
-        <div>
-        <ul>
-            <li>
-            <Link to="/home">Home</Link>
-            </li>
-            <li>
-            <Link to="/favourites">Favourites</Link>
-            </li>
-            
-        </ul>
-        <SelectCategoryComponent/>
+        <div id="navBar">
+        <div className="navItem" onClick={()=>navigate("/home")}>Home</div> 
+        <div className="navItem" onClick={()=>navigate("/favourites")}>Favourites</div>
+        <SelectCategoryComponent />
         </div>
     );
 }

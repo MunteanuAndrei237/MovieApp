@@ -1,23 +1,21 @@
 import { useSelector , useDispatch } from "react-redux";
-import MoviePreviewComponent from "./MoviePreviewComponent.js";
-import { getMoviesByTermThunk } from "../slices/searchSlice.js";
+import { fetchMoviesByTermThunk } from "../slices/searchSlice.js";
 import { addLoadedMovie } from "../slices/loadedSlice.js";
 import { useParams } from "react-router-dom";
 import { useEffect , useRef } from "react";
 import { isUserNearBottom , loadMoreTimeout } from "../assets/scrolling.js";
+import { resetSearchToIdle  } from "../slices/searchSlice.js";
+import Grid from "./GridComponent.js";
 
 const SearchResultComponent = () => {
     const term = useParams().term;
     const dispatch = useDispatch();
     const searchSliceState = useSelector(state => state.search);
-    const loadedMoviesState = useSelector(state => state.loadedMovies);
-
     const canRequestMoreRef = useRef(true);
 
     function requestMore() {
-      if (searchSliceState.searchStatus === "succeeded" && canRequestMoreRef.current) {
-       
-        dispatch(getMoviesByTermThunk(term));
+      if (canRequestMoreRef.current && searchSliceState.searchStatus !== "failed") {
+        dispatch(fetchMoviesByTermThunk(term));
         canRequestMoreRef.current = false;
         setTimeout(() => {
           canRequestMoreRef.current = true;
@@ -40,21 +38,21 @@ const SearchResultComponent = () => {
 
     useEffect(() => {
       if(searchSliceState.searchPage[term] === undefined)
-        dispatch(getMoviesByTermThunk(term));
+        dispatch(fetchMoviesByTermThunk(term));
     }, [dispatch,term])
 
     useEffect(() => {
         if(searchSliceState.searchStatus === "succeeded")
-         { dispatch(addLoadedMovie({movies:searchSliceState.searchMovies,location:term,useTerm:true}));
-            }
-      }, [dispatch,searchSliceState.searchStatus]);
+         {
+           dispatch(addLoadedMovie({movies:searchSliceState.searchMovies,location:term,useTerm:true}));
+           dispatch(resetSearchToIdle());
+         }
+      }, [searchSliceState.searchStatus]);
         
     
         return (
-          <div>{loadedMoviesState.loadedMovies.map((movie) => {
-            if(movie.locations.indexOf("term="+term) !== -1)
-        return <MoviePreviewComponent movie={movie} key={movie.id}/>  
-      })}
+          <div>        
+            <Grid location={"term="+term}/>
             {searchSliceState.searchStatus === 'loading' ? <p>loading...</p> :
             searchSliceState.searchStatus === 'failed' ? <div><h1>We ecnountered an error</h1><p>{searchSliceState.error} </p></div> : null}
             

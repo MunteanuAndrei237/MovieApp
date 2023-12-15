@@ -2,8 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import accessToken from "../assets/accessToken";
 const fetch = require('node-fetch');
 
-const addMovieToFavouritesThunk = createAsyncThunk('favourite/addMovieToFavouritesThunk', async ({ movieId, favouriteState }, { getState }) => {
+const changeFavouriteThunk = createAsyncThunk('favourites/changeFavouriteThunk', async ({ movieId, favouriteState }, { getState }) => {
   try {
+    const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite';
     const options = {
       method: 'POST',
       headers: {
@@ -17,17 +18,17 @@ const addMovieToFavouritesThunk = createAsyncThunk('favourite/addMovieToFavourit
         favorite: !favouriteState, // Set to true to mark as favorite, false to remove from favorites
       }),
     };
-
-    const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite';
     await fetch(url, options);
+
   } catch (error) {
     alert('Error: Couldn\'t ' + (favouriteState === false ? 'add' : 'remove') + ' movie ' + (favouriteState === false ? 'to' : 'from') + ' favourites');
-    console.error('Error:', error.message);
+    console.error('Error modifying a movie from favourites:', error.message);
   }
 })
 
-const getFavouriteMoviesThunk = createAsyncThunk("/favourite/getFavouriteMoviesThunk", async (_, { getState }) => {
+const fetchFavouriteMoviesThunk = createAsyncThunk("/favourite/fetchFavouriteMoviesThunk", async (_, { getState }) => {
   try {
+    const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite/movies?language=en-US&page=' + getState().favourites.favouritesPage + '&sort_by=created_at.asc';
     const options = {
       method: 'GET',
       headers: {
@@ -35,13 +36,12 @@ const getFavouriteMoviesThunk = createAsyncThunk("/favourite/getFavouriteMoviesT
         Authorization: accessToken
       }
     };
-    const url = 'https://api.themoviedb.org/3/account/' + getState().user.user.id + '/favorite/movies?language=en-US&page=' + getState().favourites.favouritesPage + '&sort_by=created_at.asc';
     const response = await fetch(url, options);
     const json = await response.json();
     return { results: json.results, totalPages: json.total_pages };
   } catch (error) {
-    console.error('Error:', error.message);
-    throw error;
+    console.error('Error fetching favourite movies.', error.message);
+    throw new Error('Error fetching favourite movies. ' + error.message);
   }
 })
 
@@ -58,26 +58,27 @@ const favouritesSlice = createSlice({
   reducers: {
   },
   extraReducers(builder) {
-    builder.addCase(getFavouriteMoviesThunk.pending, (state) => {
+    builder.addCase(fetchFavouriteMoviesThunk.pending, (state) => {
       state.favouritesStatus = 'loading';
     });
-    builder.addCase(getFavouriteMoviesThunk.fulfilled, (state, action) => {
-      
+    builder.addCase(fetchFavouriteMoviesThunk.fulfilled, (state, action) => {
       state.favouritsesTotalPages = action.payload.totalPages;
       if (state.favouritesPage === state.favouritsesTotalPages)
-        state.favouritesStatus = 'succeeded';
+        {
+          state.favouritesStatus = 'succeeded';
+        }
       else
         state.favouritesStatus = 'fetchMore';
         state.favouritesMovies = state.favouritesMovies.concat(action.payload.results);
         state.favouritesPage++;
     });
-    builder.addCase(getFavouriteMoviesThunk.rejected, (state, action) => {
+    builder.addCase(fetchFavouriteMoviesThunk.rejected, (state, action) => {
       state.favouritesStatus = 'failed';
       state.favouritesError = action.error.message;
     });
   }
 });
 
-export { addMovieToFavouritesThunk };
-export { getFavouriteMoviesThunk };
+export { changeFavouriteThunk };
+export { fetchFavouriteMoviesThunk };
 export default favouritesSlice.reducer;

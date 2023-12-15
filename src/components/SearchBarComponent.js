@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useDispatch , useSelector } from "react-redux";
 import { changeSearchTerm } from "../slices/searchSlice.js";
 import { useNavigate  } from 'react-router-dom';
+import { FaSearch ,FaTrashAlt } from 'react-icons/fa';
+import '../css/searchBar.css';
 const waitingTime = 1000;
 
 const SearchBarComponent = () => {
@@ -21,10 +23,15 @@ const SearchBarComponent = () => {
     }, [searchSliceState.searchTerm]);
 
         return (
-            <div>
-                <input type="text" value={searchSliceState.searchTerm} onChange={e=>dispatch(changeSearchTerm(e.target.value))}/>
-                <button onClick={()=>navigate('/search/'+searchSliceState.searchTerm)}>Search</button><button onClick={()=>dispatch(changeSearchTerm(""))}>Clear</button>
+          <div id="searchBarConatiner">
+            <div id="searchDiv">
+
+                <FaTrashAlt className="reactIcons" onClick={()=>dispatch(changeSearchTerm(""))}/>
+                <input id="searchInput" placeholder="Enter movie name here" type="text" value={searchSliceState.searchTerm} onChange={e=>dispatch(changeSearchTerm(e.target.value))}/>
+                <FaSearch className="reactIcons" onClick={()=>navigate('/search/'+searchSliceState.searchTerm)}/>
+                
             </div>
+          </div>
         )
 }
 

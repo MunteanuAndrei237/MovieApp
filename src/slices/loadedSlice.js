@@ -40,13 +40,15 @@ const loadedMoviesSlice = createSlice({
       const id = action.payload.id;
       state.loadedMovies.push({ id: id, locations: [] });
       state.loadedMovieIds.push(id);
+      state.locations = [];
     },
     addMovieDetails(state, action) {
       const id = action.payload.id;
       const movieDetails = action.payload.details;
       state.loadedMovies.forEach((loadedMovie) => {
         if (loadedMovie.id === id) {
-          loadedMovie.details = movieDetails;
+          for (const key in movieDetails)
+          loadedMovie[key]=movieDetails[key];
         }
       });
     },
@@ -68,7 +70,6 @@ const loadedMoviesSlice = createSlice({
           loadedMovie.images = movieImages;
         }
       });
-
     },
     addMovieReviews(state, action) {
       const id = action.payload.id;
@@ -77,7 +78,6 @@ const loadedMoviesSlice = createSlice({
         if (loadedMovie.id === id) {
           loadedMovie.reviews = movieReviews;
         }
-
       });
     }
   },

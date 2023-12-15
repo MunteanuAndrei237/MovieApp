@@ -1,36 +1,37 @@
-import { addMovieToFavouritesThunk } from "../slices/favouritesSlice.js";
+import { changeFavouriteThunk } from "../slices/favouritesSlice.js";
 import { useDispatch , useSelector } from "react-redux";
 import { changeFavouritesLocation } from "../slices/loadedSlice.js";
 import { useNavigate } from "react-router-dom";
-
+import { IoIosStar, IoIosStarOutline } from 'react-icons/io';
+import '../css/preview.css';
 const MoviePreviewComponent = ({ movie }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const favouritesState = useSelector(state => state.favourites);
 
-    function changeFavouriteState(movie)
+    function changeFavouriteState(movie,event)
     {
-        dispatch(addMovieToFavouritesThunk({ movieId: movie.id,favouriteState:movie.locations.indexOf("favourites") !== -1}))
+        event.stopPropagation();
+        dispatch(changeFavouriteThunk({ movieId: movie.id,favouriteState:movie.locations.indexOf("favourites") !== -1}))
         .then(()=>dispatch(changeFavouritesLocation(movie.id)))
     }
-    
 
     return (
-        <div onClick={() => {/*navigate('/movie/'+movie.id)*/}  }>
-            <p>{movie.title}</p> 
-            <img src={"https://image.tmdb.org/t/p/w92" + movie.poster_path} />
-            <p>Release date {movie.release_date}</p><p>Vote average {movie.vote_average}</p>
-            {favouritesState.favouritesStatus === 'succeeded' ?
-            movie.locations.indexOf("favourites") !== -1 ?
-            <button onClick={() => { changeFavouriteState(movie) }}>Remove from favourites</button> 
-            :
-            <button onClick={() => { changeFavouriteState(movie) }}>Add to favourites</button>
-             : favouritesState.favouritesStatus === 'loading' ?
-             <button >Loading favourites</button>
-             :
-            <button >Could't fetch favourites</button>}
-            <button onClick={() => { navigate('/movie/'+movie.id) }}>See movie details</button>
+        <div onClick={() => { navigate('/movie/'+movie.id) }}>
+            <img className="moviePoster" src={"https://image.tmdb.org/t/p/w780" + movie.poster_path} />
+            <div className="titleAndStar">
+                <h2 className="movieTitle">{movie.title}</h2> 
+                {favouritesState.favouritesStatus === 'succeeded' ?
+                movie.locations.indexOf("favourites") !== -1 ?
+                <IoIosStar color="yellow" className="reactIcons" onClick={e => { changeFavouriteState(movie,e) }}/> :
+                <IoIosStarOutline className="reactIcons"  onClick={e => { changeFavouriteState(movie,e) }}/> :
+                <span></span>}
             </div>
+            <div className="dateAndAvg">
+                <p className="movieDate">Release date<br/> {movie.release_date}</p>
+                <h2 className="movieAvg">{parseInt(movie.vote_average*10)+"%"}</h2>
+            </div>
+        </div>
     )
 }
 

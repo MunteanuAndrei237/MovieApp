@@ -1,21 +1,14 @@
-import {  useSelector} from "react-redux";
-import MoviePreviewComponent from "./MoviePreviewComponent.js";
-
+import { useSelector} from "react-redux";
+import Grid from "./GridComponent.js";
 
 const FavouriesComponent = () => {   
-
-    const loadedMovies = useSelector(state => state.loadedMovies);
     const favoritesState = useSelector(state => state.favourites);
     
     return (   
         favoritesState.favouritesStatus === 'succeeded' ?
-        loadedMovies.loadedMovies.map((movie) => {
-            if(movie.locations.indexOf("favourites") !== -1)  
-                    return <div key={movie.id}>
-                    <MoviePreviewComponent movie={movie}/>
-                    </div>
-            })
-        : loadedMovies.favouritesStatus === 'loading' ? <p>loading...</p> : loadedMovies.favouritesError
+        <Grid location={"favourites"}/>
+        : favoritesState.favouritesStatus === 'loading' ? <p>loading...</p> : 
+        favoritesState.favouritesStatus === 'failed' ? <div><h3>we encountered an error</h3><p>{favoritesState.favouritesError}</p></div> : null
     );
 }
 

@@ -1,0 +1,30 @@
+.moviePoster{
+    width:14vw;
+}
+.movieDate{
+    font-size: 16px;
+}
+.titleAndStar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.movieTitle{
+    width: fit-content;
+}
+.dateAndAvg{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1vh;
+}
+@media (max-width: 767px) {
+    .moviePoster{
+        width:28vw;
+    }
+    .movieDate{
+        font-size: 10px;
+    }
+}

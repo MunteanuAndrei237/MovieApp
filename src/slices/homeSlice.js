@@ -5,19 +5,19 @@ const fetch = require('node-fetch');
 const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (_ , { getState}) => {
   if(getState().home.homePage <= getState().home.homeTotalPages)
   {
-  const homeMoviesUrl = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=' + getState().home.homePage;
+  const url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=' + getState().home.homePage;
   const options = getOptions;
   try {
-    const response = await fetch(homeMoviesUrl, options);
-    const data = await response.json();
+    const response = await fetch(url, options);
+    const json = await response.json();
     if(getState().home.homePage===1)
-      return {results:data.results,totalPages:data.total_pages};
+      return {results:json.results,totalPages:json.total_pages};
     else
-      return data.results;
+      return json.results;
     }
    catch (error) {
-    console.error('error:', error);
-    throw error;
+    console.error('Error fetching home movies. ', error);
+    throw new Error('Error fetching home movies. ' + error);
   }
 }}
 )
@@ -28,11 +28,14 @@ const homeSlice = createSlice({
     homeMovies:[],
     homeStatus: 'idle',
     homeError: null,
-    homePage:1,
+    homePage: 1,
     homeTotalPages: 100
   },
   reducers: {
-
+      resetHomeToIdle(state) {
+          state.homeStatus = 'idle';
+          state.homeMovies =[];
+      }
   },
   extraReducers(builder){
     builder.addCase(fetchHomeMoviesThunk.pending, (state) => {
@@ -57,5 +60,6 @@ const homeSlice = createSlice({
   }
 });
 
+export const { resetHomeToIdle } = homeSlice.actions;
 export { fetchHomeMoviesThunk };
 export default homeSlice.reducer;

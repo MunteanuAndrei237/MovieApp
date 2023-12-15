@@ -1,46 +1,61 @@
 import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
-const getMoviesByGenreThunk = createAsyncThunk("genre/getMoviesByGenreThunk", async (genreId , { getState }) => {
-    console.log(getState().genre.genresPage[genreId],genreId);
-if(getState().genre.genresPage[genreId] <= getState().genre.genresTotalPages[genreId])
+const fetchMoviesByGenreThunk = createAsyncThunk("genres/fetchMoviesByGenreThunk", async (genreId , { getState }) => {
+if(getState().genres.genresPage[genreId] <= getState().genres.genresTotalPages[genreId])
 {
-const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page='+ getState().genre.genresPage[genreId] + '&sort_by=popularity.desc&with_genres='+genreId;
-const options = getOptions;
-const response = await fetch(url, options);
-const json = await response.json();
-if(getState().genre.genresPage[genreId]===1)
-return {results:json.results,totalPages:json.total_pages,genreId:genreId};
-else
-return {results:json.results,genreId:genreId};
-}
+    try{
+        const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page='+ getState().genres.genresPage[genreId] + '&sort_by=popularity.desc&with_genres='+genreId;
+        const options = getOptions;
+        const response = await fetch(url, options);
+        const json = await response.json();
+        if(getState().genres.genresPage[genreId]===1)
+        return {results:json.results,totalPages:json.total_pages,genreId:genreId};
+        else
+        return {results:json.results,genreId:genreId};
+    }   
+    catch(error){
+        console.error('Error feching movies by genre .', error);
+        throw new Error('Error feching movies by genre . ' + error);
+    }
+}});
+
+const fetchGenresThunk = createAsyncThunk("genres/fetchGenresThunk", async () => {
+    try{
+        const url = 'https://api.themoviedb.org/3/genre/movie/list?language=en';
+        const options = getOptions;
+        const response = await fetch(url, options);
+        const json = await response.json();
+        return json.genres;
+    }
+    catch(error){
+        console.error('Error fetching genres. ', error);
+        throw new Error('Error fetching genres. ' + error);
+    }
 });
 
-const getGenresThunk = createAsyncThunk("genre/getGenresThunk", async () => {
-    const url = 'https://api.themoviedb.org/3/genre/movie/list?language=en';
-    const options = getOptions;
-    const response = await fetch(url, options);
-    const json = await response.json();
-    return json.genres;
-});
-
-const genreSlice = createSlice({
-    name: "genre",
+const genresSlice = createSlice({
+    name: "genres",
     initialState: {
         genres: [],
         genresStatus: 'idle',
         genresError: null,
         movies:[],
         moviesStatus: 'idle',
+        moviesError: null,
         genresPage:{},
         genresTotalPages: {}
     },
     reducers: {
+        resetGenreToIdle(state) {
+            state.moviesStatus = 'idle';
+            state.movies =[];
+        }
     },
     extraReducers(builder) {
-        builder.addCase(getGenresThunk.pending, (state) => {
+        builder.addCase(fetchGenresThunk.pending, (state) => {
             state.genresStatus = 'loading';
         });
-        builder.addCase(getGenresThunk.fulfilled, (state, action) => {
+        builder.addCase(fetchGenresThunk.fulfilled, (state, action) => {
             state.genresStatus = 'succeeded';
             state.genres = action.payload;
             action.payload.forEach((genre)=>{
@@ -48,28 +63,29 @@ const genreSlice = createSlice({
                 state.genresPage[genre.id]=1;
             });
         });
-        builder.addCase(getGenresThunk.rejected, (state, action) => {
+        builder.addCase(fetchGenresThunk.rejected, (state, action) => {
             state.genresStatus = 'failed';
-            state.genresError = action.error;
+            state.genresError = action.error.message;
         });
 
 
-        builder.addCase(getMoviesByGenreThunk.pending, (state) => {
+        builder.addCase(fetchMoviesByGenreThunk.pending, (state) => {
             state.moviesStatus = 'loading';
         });
-        builder.addCase(getMoviesByGenreThunk.fulfilled, (state, action) => {
+        builder.addCase(fetchMoviesByGenreThunk.fulfilled, (state, action) => {
             state.moviesStatus = 'succeeded';
             if(state.genresPage[action.payload.genreId]===1)
                 state.genresTotalPages[action.payload.genreId]=action.payload.totalPages;
             state.movies=action.payload.results;
             state.genresPage[action.payload.genreId]++;
         })
-        builder.addCase(getMoviesByGenreThunk.rejected, (state, action) => {
+        builder.addCase(fetchMoviesByGenreThunk.rejected, (state, action) => {
             state.moviesStatus = 'failed';
-            state.moviesError = action.error;
+            state.moviesError = action.error.message;
         });
     }
 });
 
-export { getGenresThunk, getMoviesByGenreThunk };
-export default genreSlice.reducer;
+export const { selectGenre , resetGenreToIdle} = genresSlice.actions;
+export { fetchGenresThunk, fetchMoviesByGenreThunk };
+export default genresSlice.reducer;

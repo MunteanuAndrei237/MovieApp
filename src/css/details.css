@@ -1,0 +1,33 @@
+.movieDetails{
+    margin-left:4vw;
+    margin-top:4vh;
+    display: grid;
+    grid-template-columns: (2,48%);
+
+
+}
+.movieImage{
+    width: 48%;
+}
+
+.castContainer{
+    display: grid;
+    grid-template-columns: repeat(6, 14vw);
+    grid-gap: 2vw;
+    text-align: center;
+}
+
+.castImage{
+    width:14vw;
+}
+
+@media (max-width: 767px) {
+    .castContainer{
+        display: grid;
+        grid-template-columns: repeat(3, 28vw);
+        grid-gap: 4vw;
+    }
+    .castImage{
+        width:28vw;
+    }
+}

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import loadedMoviesSlice from '../slices/loadedSlice.js';
-import genreSlice from '../slices/genresSlice.js';
+import genresSlice from '../slices/genresSlice.js';
 import userSlice from '../slices/userSlice.js';
 import searchSlice from '../slices/searchSlice.js';
 import detailsSlice from '../slices/detailsSlice.js';
@@ -12,7 +12,7 @@ const globalStore = configureStore({
     loadedMovies: loadedMoviesSlice,
     favourites: favouritesSlice,
     home: homeSlice,
-    genre: genreSlice,
+    genres: genresSlice,
     user: userSlice,
     search: searchSlice,
     details: detailsSlice,
