@@ -1,15 +1,17 @@
 .moviesGrid{
     display: grid;
-    grid-template-columns: repeat(6, 14vw);
-    grid-gap: 2vw;
-    margin-left: 2vw;
+    grid-template-columns: repeat(var(--moviesAndCastPerColumnB), var(--moviesAndCastWidthB));
+    grid-gap:var(--moviesGapB);
+    margin-left:var(--marginLeftB);
     margin-top:4vh;
 }
 
 @media (max-width: 767px) {
     .moviesGrid{
-        grid-template-columns: repeat(3, 28vw);
-        grid-gap: 4vw;
-        margin-left: 4vw;
+        display: grid;
+        grid-template-columns: repeat(var(--moviesAndCastPerColumnS), var(--moviesAndCastWidthS));
+        grid-gap: var(--moviesGapS);
+        margin-left: var(--marginLeftS);
+        margin-top:4vh;
     }
 }

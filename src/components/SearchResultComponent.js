@@ -14,7 +14,9 @@ const SearchResultComponent = () => {
     const canRequestMoreRef = useRef(true);
 
     function requestMore() {
-      if (canRequestMoreRef.current && searchSliceState.searchStatus !== "failed") {
+      if (canRequestMoreRef.current && searchSliceState.searchStatus !== "failed" && 
+      (searchSliceState.searchTotalPages[term]=== undefined || searchSliceState.searchPage[term] <= searchSliceState.searchTotalPages[term])) 
+      {
         dispatch(fetchMoviesByTermThunk(term));
         canRequestMoreRef.current = false;
         setTimeout(() => {

@@ -1,14 +1,14 @@
 #navBar{
     display:flex;
     flex-direction:row;
-    margin-left: 2vw;
-    gap:2vw;
+    margin-left: var(--marginLeftB);
+    gap:var(--moviesGapB);
 }
 .navItem{
-    width: 14vw;
+    width: var(--moviesAndCastWidthB);
+    font-size: 20px; 
     text-align: center;
     display: inline-block;
-    font-size: 20px; 
     line-height: 1.5;
     color: #333;
     vertical-align: middle;
@@ -25,10 +25,26 @@
 
 @media (max-width: 767px) {
     #navBar{
-        margin-left: 4vw;
+        display:flex;
+        flex-direction:row;
+        margin-left: var(--marginLeftS);
+        gap:var(--moviesGapS);
     }
     .navItem{
-        width: 23vw;
+        width: var(--moviesAndCastWidthS);
         font-size: 12px; 
+        text-align: center;
+        display: inline-block;
+        line-height: 1.5;
+        color: #333;
+        vertical-align: middle;
+        padding: 2px 5px;
+        margin: 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        appearance: none; /* Removes default dropdown arrow in some browsers */
+        cursor: pointer;
+        background-color: white;
     }
 }

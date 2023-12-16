@@ -1,8 +1,7 @@
 import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
 const fetchMoviesByGenreThunk = createAsyncThunk("genres/fetchMoviesByGenreThunk", async (genreId , { getState }) => {
-if(getState().genres.genresPage[genreId] <= getState().genres.genresTotalPages[genreId])
-{
+
     try{
         const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page='+ getState().genres.genresPage[genreId] + '&sort_by=popularity.desc&with_genres='+genreId;
         const options = getOptions;
@@ -17,7 +16,7 @@ if(getState().genres.genresPage[genreId] <= getState().genres.genresTotalPages[g
         console.error('Error feching movies by genre .', error);
         throw new Error('Error feching movies by genre . ' + error);
     }
-}});
+});
 
 const fetchGenresThunk = createAsyncThunk("genres/fetchGenresThunk", async () => {
     try{

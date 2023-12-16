@@ -2,6 +2,35 @@ html{
   width:100%;
   height:100%;
 }
+
+:root {
+  --fontSizeB: 16px;
+  --fontSizeS: 10px;
+  --reactIconsSizeB: 1.5rem;
+  --reactIconsSizeS: 1rem;
+  --moviesAndCastPerColumnB: 6;
+  --moviesAndCastPerColumnS: 3;
+  --moviesAndCastWidthB: 14vw;
+  --moviesAndCastWidthS: 28vw;
+  --moviesGapB: 2vw;
+  --moviesGapS: 4vw;
+  --marginLeftB: 2vw;
+  --marginLeftS: 4vw;
+  --detailsGapB: 1.2vh;
+  --detailsGapS: 0.8vh;
+  --posterWidthB: 47vw;
+  --posterWidthS: 44vw;
+  --photoWidthB: 22vw;
+  --photoWidthS: 45vw;
+  --photoGap: 2vw;
+  --searchBarFontSizeB: 20px;
+  --searchBarFontSizeS: 14px;
+  --searchBarPaddingB: 1%;
+  --searchBarPaddingS: 2%;
+  --searchBarBorderRadiusB: 80px;
+  --searchBarBorderRadiusS: 30px;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,12 +40,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   width:100%;
   height:100%;
+  font-size: var(--fontSizeB);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 
 p,h1,h2,h3,h4,h5,h6,ul,li,ol {
   margin: 0;
@@ -25,14 +56,21 @@ p,h1,h2,h3,h4,h5,h6,ul,li,ol {
 }
 
 .reactIcons{
-  font-size : 1.5rem !important;
+  font-size : var(--reactIconsSizeB) !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.reactIcons:hover{
+  cursor: pointer;
+  scale: 1.2;
 }
 
 @media (max-width: 767px) {
   body {
-    font-size: 10px;
+    font-size: var(--fontSizeS);
   }
   .reactIcons{
-    font-size : 1rem !important;
+    font-size : var(--reactIconsSizeS) !important;
+    transition: all 0.3s ease-in-out;
   }
-}
+} 

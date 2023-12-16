@@ -1,0 +1,15 @@
+.reviewAuthorAndDate{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top:1.3vh;
+    margin-bottom:1.3vh;
+}
+.reviewsContainer{
+    padding-right: var(--marginLeftB);
+}
+@media (max-width: 767px) {
+    .reviewsContainer{
+        padding-right: var(--marginLeftS);
+    }
+}

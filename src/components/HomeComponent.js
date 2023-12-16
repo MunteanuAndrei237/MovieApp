@@ -7,13 +7,12 @@ import { resetHomeToIdle } from "../slices/homeSlice.js";
 import Grid from "./GridComponent.js";
 const HomeComponent = () => {
   const homeSliceState = useSelector(state => state.home);
-  const loadedMoviesState = useSelector(state => state.loadedMovies);
   const dispatch = useDispatch();
   
   const canRequestMoreRef = useRef(true);
 
   function requestMore() {
-    if (homeSliceState.homeStatus !=="failed" && canRequestMoreRef.current) {
+    if (homeSliceState.homeStatus !=="failed" && canRequestMoreRef.current && homeSliceState.homePage <= homeSliceState.homeTotalPages) {
       dispatch(fetchHomeMoviesThunk());
       canRequestMoreRef.current = false;
       setTimeout(() => {

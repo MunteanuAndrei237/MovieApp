@@ -10,7 +10,7 @@ import { fetchFavouriteMoviesThunk } from './slices/favouritesSlice.js';
 import SearchBarComponent from './components/SearchBarComponent.js';
 import SearchResultComponent from './components/SearchResultComponent.js';
 import SearchGenreResultComponent from './components/GenreResultComponent.js';
-import MovieDetailsComponent from './components/MovieDetailsComponent.js';
+import MovieComponent from './components/MovieComponent.js';
 import { addLoadedMovie } from './slices/loadedSlice.js';
 import HeaderComponent from './components/HeaderComponent.js';
 
@@ -20,7 +20,7 @@ function App() {
   const dispatch = useDispatch();
   const favouritesState = useSelector(state => state.favourites);
   const userState = useSelector(state => state.user);
-
+  const loadedState = useSelector(state => state.loaded);
   useEffect(() => {
     dispatch(generateTokenThunk());
   }, [])
@@ -74,7 +74,7 @@ function App() {
           <Route path="/home" element={<HomeComponent />} />
           <Route path="/favourites" element={<FavouriesComponent />} />
           <Route path="/search/:term" element={<SearchResultComponent />} />
-          <Route path="/movie/:movieId" element={<MovieDetailsComponent />} />
+          <Route path="/movie/:movieId" element={<MovieComponent />} />
         </Routes>
         </div> : null
       }
@@ -85,4 +85,5 @@ function App() {
 export default App;
 
 
-//        <button onClick={() => console.log(loadedState)}>print</button>
+//                <button onClick={() => console.log(loadedState)}>print</button>
+

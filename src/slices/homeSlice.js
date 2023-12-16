@@ -3,11 +3,9 @@ import getOptions from "../assets/getOptions";
 const fetch = require('node-fetch');
 
 const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (_ , { getState}) => {
-  if(getState().home.homePage <= getState().home.homeTotalPages)
-  {
-  const url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=' + getState().home.homePage;
-  const options = getOptions;
   try {
+    const url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=' + getState().home.homePage;
+    const options = getOptions;
     const response = await fetch(url, options);
     const json = await response.json();
     if(getState().home.homePage===1)
@@ -18,9 +16,7 @@ const fetchHomeMoviesThunk = createAsyncThunk('home/fetchHomeMovies', async (_ ,
    catch (error) {
     console.error('Error fetching home movies. ', error);
     throw new Error('Error fetching home movies. ' + error);
-  }
-}}
-)
+  }})
 
 const homeSlice = createSlice({
   name: 'home',

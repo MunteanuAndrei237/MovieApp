@@ -1,15 +1,20 @@
 .moviePoster{
-    width:14vw;
+    width:var(--moviesAndCastWidthB);
 }
-.movieDate{
-    font-size: 16px;
+.preview{
+    transition: all 0.3s ease-in-out;
 }
-.titleAndStar{
-    display: flex;
-    flex-direction: row;
+.preview:hover{
+    cursor: pointer;
+    scale: 1.03;
+}
+.titleAndStar {
+    display: grid;
+    grid-template-columns: 87% 13%;
     align-items: center;
-    justify-content: space-between;
+    margin-bottom: 0.5vh;
 }
+
 .movieTitle{
     width: fit-content;
 }
@@ -18,13 +23,10 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-top: 1vh;
 }
 @media (max-width: 767px) {
     .moviePoster{
-        width:28vw;
+        width:var(--moviesAndCastWidthS);
     }
-    .movieDate{
-        font-size: 10px;
-    }
+
 }

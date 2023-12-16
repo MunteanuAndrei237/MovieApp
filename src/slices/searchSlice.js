@@ -1,8 +1,6 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
 const fetchMoviesByTermThunk = createAsyncThunk("/search/fetchMoviesByTermThunk", async ( term , {getState} ) => {
-  if(getState().search.searchTotalPages[term]=== undefined || getState().search.searchPage[term] <= getState().search.searchTotalPages[term])
-    {
       try{
       const url = 'https://api.themoviedb.org/3/search/movie?query='+ term +'&include_adult=false&language=en-US&page=' + ((getState().search.searchPage[term] === undefined) ? 1 : (getState().search.searchPage[term]));
       const options = getOptions;
@@ -17,7 +15,7 @@ const fetchMoviesByTermThunk = createAsyncThunk("/search/fetchMoviesByTermThunk"
       console.error('Searching Error. ', error.message);
       throw new Error('Searching Error. ' + error.message);
     }
-  }});
+  });
 
 const searchSlice = createSlice({   
     name: "search",

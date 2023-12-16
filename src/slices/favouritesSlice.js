@@ -63,7 +63,7 @@ const favouritesSlice = createSlice({
     });
     builder.addCase(fetchFavouriteMoviesThunk.fulfilled, (state, action) => {
       state.favouritsesTotalPages = action.payload.totalPages;
-      if (state.favouritesPage === state.favouritsesTotalPages)
+      if (state.favouritesPage >= state.favouritsesTotalPages)
         {
           state.favouritesStatus = 'succeeded';
         }

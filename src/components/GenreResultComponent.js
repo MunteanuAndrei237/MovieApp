@@ -14,7 +14,8 @@ const SearchGenreResultComponent =()=> {
     const canRequestMoreRef = useRef(true);
 
     function requestMore() {
-      if (genresSliceState.moviesStatus !== "failed" && canRequestMoreRef.current) {
+      if (genresSliceState.moviesStatus !== "failed" && canRequestMoreRef.current
+      && genresSliceState.genresPage[genreId] <= genresSliceState.genresTotalPages[genreId]) {
         dispatch(fetchMoviesByGenreThunk(genreId));
         canRequestMoreRef.current = false;
         setTimeout(() => {
@@ -33,7 +34,6 @@ const SearchGenreResultComponent =()=> {
       window.addEventListener('scroll', handleScroll);
       return ()=>{window.removeEventListener('scroll', handleScroll);}
     }, [requestMore,genreId]);
-
 
     useEffect(() => {
         if(genresSliceState.genresStatus === 'succeeded' && genresSliceState.genresPage[genreId] === 1 )
