@@ -1,17 +1,16 @@
-.movieDetails{
-    margin-left:var(--marginLeftB);
-    margin-top:4vh;
+.movieDetails {
+  margin-left: var(--marginLeftB);
+  margin-top: 4vh;
 }
-.detailsSubTitle{
-    margin-bottom: 1.5vh;
-    margin-top: 1.5vh;
-    align-self: center;
-    text-align: center;
+.detailsSubTitle {
+  margin-bottom: 1.5vh;
+  margin-top: 1.5vh;
+  align-self: center;
+  text-align: center;
 }
 @media (max-width: 767px) {
-    .movieDetails{
-        margin-left:var(--marginLeftS);
-        margin-top:4vh;
-    }
+  .movieDetails {
+    margin-left: var(--marginLeftS);
+    margin-top: 4vh;
+  }
 }
-

@@ -1,32 +1,31 @@
-.moviePoster{
-    width:var(--moviesAndCastWidthB);
+.moviePoster {
+  width: var(--moviesAndCastWidthB);
 }
-.preview{
-    transition: all 0.3s ease-in-out;
+.preview {
+  transition: all 0.3s ease-in-out;
 }
-.preview:hover{
-    cursor: pointer;
-    scale: 1.03;
+.preview:hover {
+  cursor: pointer;
+  scale: 1.03;
 }
 .titleAndStar {
-    display: grid;
-    grid-template-columns: 87% 13%;
-    align-items: center;
-    margin-bottom: 0.5vh;
+  display: grid;
+  grid-template-columns: 87% 13%;
+  align-items: center;
+  margin-bottom: 0.5vh;
 }
 
-.movieTitle{
-    width: fit-content;
+.movieTitle {
+  width: fit-content;
 }
-.dateAndAvg{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+.dateAndAvg {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 @media (max-width: 767px) {
-    .moviePoster{
-        width:var(--moviesAndCastWidthS);
-    }
-
+  .moviePoster {
+    width: var(--moviesAndCastWidthS);
+  }
 }

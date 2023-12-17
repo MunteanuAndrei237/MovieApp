@@ -1,58 +1,66 @@
-import { useEffect, useRef } from "react";
-import { fetchHomeMoviesThunk } from '../slices/homeSlice.js';
-import { useSelector, useDispatch } from "react-redux";
-import { addLoadedMovie } from "../slices/loadedSlice.js";
-import { isUserNearBottom , loadMoreTimeout } from "../assets/scrolling.js";
-import { resetHomeToIdle } from "../slices/homeSlice.js";
 import Grid from "./GridComponent.js";
-const HomeComponent = () => {
-  const homeSliceState = useSelector(state => state.home);
+import { useEffect, forwardRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchHomeMoviesThunk } from "../slices/homeSlice.js";
+import { addMovieToLocation } from "../slices/loadedSlice.js";
+import { resetHomeToIdle } from "../slices/homeSlice.js";
+
+const HomeComponent = forwardRef((_, requestMoreFunctionRef) => {
   const dispatch = useDispatch();
-  
-  const canRequestMoreRef = useRef(true);
+  const homeSliceState = useSelector((state) => state.home);
 
-  function requestMore() {
-    if (homeSliceState.homeStatus !=="failed" && canRequestMoreRef.current && homeSliceState.homePage <= homeSliceState.homeTotalPages) {
-      dispatch(fetchHomeMoviesThunk());
-      canRequestMoreRef.current = false;
-      setTimeout(() => {
-        canRequestMoreRef.current = true;
-      }, loadMoreTimeout); 
-    }
-  }
-
-  function handleScroll() {
-    if (isUserNearBottom()) {
-      requestMore();
-    }
-  }
-
+  //fetch home movies
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return ()=>{window.removeEventListener('scroll', handleScroll);}
-  }, [handleScroll]);
+    if (homeSliceState.homePage === 1) dispatch(fetchHomeMoviesThunk());
+  }, [dispatch, homeSliceState.homePage]);
 
-  useEffect(() => {
-    if(homeSliceState.homePage === 1)
-    dispatch(fetchHomeMoviesThunk());
-  }, [dispatch,homeSliceState.homePage]);
-
+  //if home movies were fetched, add them to loaded movies state
   useEffect(() => {
     if (homeSliceState.homeStatus === "succeeded") {
-      dispatch(addLoadedMovie({ movies: homeSliceState.homeMovies, location: "home" }));
+      dispatch(
+        addMovieToLocation({
+          movies: homeSliceState.homeMovies,
+          location: "home",
+        }),
+      );
       dispatch(resetHomeToIdle());
     }
-  }, [dispatch, homeSliceState.homeStatus]);
+  }, [dispatch, homeSliceState.homeStatus, homeSliceState.homeMovies]);
+
+  //modify the scrollingRef to a function that fetches more home movies, then reset it to null when component unmounts
+  useEffect(() => {
+    requestMoreFunctionRef.current = () => {
+      if (
+        homeSliceState.homeStatus !== "failed" &&
+        homeSliceState.homePage <= homeSliceState.homeTotalPages
+      )
+        dispatch(fetchHomeMoviesThunk());
+    };
+    return () => (requestMoreFunctionRef.current = null);
+  }, [
+    dispatch,
+    homeSliceState.homeStatus,
+    homeSliceState.homePage,
+    homeSliceState.homeTotalPages,
+    requestMoreFunctionRef,
+  ]);
 
   return (
     <div>
-      <Grid location={"home"}/>
-      {homeSliceState.homeStatus === 'loading' ? <h1 className="loading">Loading movies<div className="loading-spinner"/></h1> :
-        homeSliceState.homeStatus === 'failed' ? <div className="error"><h1>We encountered an error</h1><p>{homeSliceState.homeError}</p></div> :
-          null}
-
+      <Grid location={"home"} />
+      {homeSliceState.homeStatus === "loading" ? (
+        <h1 className="loading">
+          Loading movies
+          <div className="loading-spinner" />
+        </h1>
+      ) : homeSliceState.homeStatus === "failed" ? (
+        <div className="error">
+          <h1>We encountered an error</h1>
+          <p>{homeSliceState.homeError}</p>
+        </div>
+      ) : null}
     </div>
   );
-}
+});
 
 export default HomeComponent;

@@ -1,25 +1,25 @@
-
-.photosGrid{
-    display: grid;
-    grid-template-columns: repeat(4, var(--photoWidthB));
-    column-gap: var(--photoGap);
+.photosGrid {
+  display: grid;
+  grid-template-columns: repeat(4, var(--photoWidthB));
+  column-gap: var(--photoGap);
 }
-.photo{
-    width: var(--photoWidthB);
-    transition: all 0.3s ease-in-out;
+.photo {
+  width: var(--photoWidthB);
+  transition: all 0.3s ease-in-out;
 }
 
-.photo:hover{
-    scale: 1.03;
+.photo:hover {
+  scale: 1.03;
 }
 
 @media (max-width: 767px) {
-.photosGrid{
+  .photosGrid {
     display: grid;
     grid-template-columns: repeat(2, var(--photoWidthS));
     column-gap: var(--photoGap);
-}
-.photo{
+  }
+  .photo {
     width: var(--photoWidthS);
     transition: all 0.3s ease-in-out;
-}}
+  }
+}

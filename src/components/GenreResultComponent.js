@@ -1,68 +1,73 @@
-import { useSelector ,useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { fetchMoviesByGenreThunk } from "../slices/genresSlice.js";
-import { useEffect ,useRef } from "react";
-import { addLoadedMovie } from "../slices/loadedSlice.js";
-import { isUserNearBottom , loadMoreTimeout } from "../assets/scrolling.js";
-import { resetGenreToIdle } from "../slices/genresSlice.js";
 import Grid from "./GridComponent.js";
+import { useEffect, forwardRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { fetchMoviesByGenreThunk, selectGenre } from "../slices/genresSlice.js";
+import { addMovieToLocation } from "../slices/loadedSlice.js";
+import { resetGenreToIdle } from "../slices/genresSlice.js";
 
-const SearchGenreResultComponent =()=> {
-    const dispatch = useDispatch();
-    const genreId=useParams().genreId;
-    const genresSliceState = useSelector(state => state.genres);
-    const canRequestMoreRef = useRef(true);
+const SearchGenreResultComponent = forwardRef((_, requestMoreFunctionRef) => {
+  const dispatch = useDispatch();
+  const genreId = useParams().genreId;
+  const genresSliceState = useSelector((state) => state.genres);
 
-    function requestMore() {
-      if (genresSliceState.moviesStatus !== "failed" && canRequestMoreRef.current
-      && genresSliceState.genresPage[genreId] <= genresSliceState.genresTotalPages[genreId]) {
+  //modify the selected gnre based on the url parameter
+  useEffect(() => {
+    dispatch(selectGenre(genreId));
+    return () => {
+      dispatch(selectGenre("default"));
+    };
+  }, [dispatch, genreId]);
+
+  //fetch movies by genre
+  useEffect(() => {
+    if (genresSliceState.genresPage[genreId] === 1)
+      dispatch(fetchMoviesByGenreThunk(genreId));
+  }, [dispatch, genreId]);
+
+  //if movies were fetched, add them to loaded movies state
+  useEffect(() => {
+    if (genresSliceState.moviesStatus === "succeeded") {
+      dispatch(
+        addMovieToLocation({
+          movies: genresSliceState.movies,
+          location: genreId,
+        }),
+      );
+      dispatch(resetGenreToIdle());
+    }
+  }, [dispatch, genresSliceState.moviesStatus]);
+
+  //modify the scrollingRef to a function that fetches more movies by genre, then reset it to null when component unmounts
+  useEffect(() => {
+    requestMoreFunctionRef.current = () => {
+      if (
+        genresSliceState.moviesStatus !== "failed" &&
+        genresSliceState.genresPage[genreId] <=
+          genresSliceState.genresTotalPages[genreId]
+      )
         dispatch(fetchMoviesByGenreThunk(genreId));
-        canRequestMoreRef.current = false;
-        setTimeout(() => {
-          canRequestMoreRef.current = true;
-        }, loadMoreTimeout); 
-      }
-    }
-  
-    function handleScroll() {
-      if (isUserNearBottom()) {
-        requestMore();
-      }
-    }
-  
-    useEffect(() => {
-      window.addEventListener('scroll', handleScroll);
-      return ()=>{window.removeEventListener('scroll', handleScroll);}
-    }, [requestMore,genreId]);
+    };
 
-    useEffect(() => {
-        if(genresSliceState.genresStatus === 'succeeded' && genresSliceState.genresPage[genreId] === 1 )
-        {
-          dispatch(fetchMoviesByGenreThunk(genreId));
-        }
+    return () => (requestMoreFunctionRef.current = null);
+  }, [dispatch, genreId, genresSliceState.moviesStatus]);
 
-    }, [dispatch,genreId,genresSliceState.genresStatus])
-   
-    useEffect(() => {
-        if(genresSliceState.moviesStatus === "succeeded")
-          {
-            dispatch(addLoadedMovie({movies:genresSliceState.movies,location:genreId}));
-            dispatch(resetGenreToIdle());
-          }
-      }, [dispatch,genresSliceState.moviesStatus]);
-
-    return(
-        <div>
-        <Grid location={genreId}/>
-        {genresSliceState.moviesStatus === 'loading' ? <h1 className="loading">Loading movies<div className="loading-spinner"/></h1> :
-        genresSliceState.moviesStatus === 'failed' ?     
-            <div className="error">
-            <h1>We ecnountered an error</h1>
-            <p>{genresSliceState.moviesError} </p>
-            </div> : null}
+  return (
+    <div>
+      <Grid location={genreId} />
+      {genresSliceState.moviesStatus === "loading" ? (
+        <h1 className="loading">
+          Loading movies
+          <div className="loading-spinner" />
+        </h1>
+      ) : genresSliceState.moviesStatus === "failed" ? (
+        <div className="error">
+          <h1>We ecnountered an error</h1>
+          <p>{genresSliceState.moviesError} </p>
         </div>
-    )
-};
+      ) : null}
+    </div>
+  );
+});
 
 export default SearchGenreResultComponent;
-

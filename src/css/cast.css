@@ -1,28 +1,34 @@
-.castContainer{
-    display: grid;
-    grid-template-columns: repeat(var(--moviesAndCastPerColumnB), var(--moviesAndCastWidthB));
-    grid-gap: var(--marginLeftB);
-    text-align: center;
+.castContainer {
+  display: grid;
+  grid-template-columns: repeat(
+    var(--moviesAndCastPerColumnB),
+    var(--moviesAndCastWidthB)
+  );
+  grid-gap: var(--marginLeftB);
+  text-align: center;
 }
 
-.castImage{
-    width:var(--moviesAndCastWidthB);
-    transition: all 0.3s ease-in-out;
+.castImage {
+  width: var(--moviesAndCastWidthB);
+  transition: all 0.3s ease-in-out;
 }
 
-.castImage:hover{
-    scale: 1.03;
+.castImage:hover {
+  scale: 1.03;
 }
 
 @media (max-width: 767px) {
-    .castContainer{
-        display: grid;
-        grid-template-columns: repeat(var(--moviesAndCastPerColumnS), var(--moviesAndCastWidthS));
-        grid-gap: var(--marginLeftS);
-        text-align: center;
-    }
-    .castImage{
-        width:var(--moviesAndCastWidthS);
-        transition: all 0.3s ease-in-out;
-    }
+  .castContainer {
+    display: grid;
+    grid-template-columns: repeat(
+      var(--moviesAndCastPerColumnS),
+      var(--moviesAndCastWidthS)
+    );
+    grid-gap: var(--marginLeftS);
+    text-align: center;
+  }
+  .castImage {
+    width: var(--moviesAndCastWidthS);
+    transition: all 0.3s ease-in-out;
+  }
 }

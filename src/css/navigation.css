@@ -1,12 +1,37 @@
-#navBar{
-    display:flex;
-    flex-direction:row;
-    margin-left: var(--marginLeftB);
-    gap:var(--moviesGapB);
+#navBar {
+  display: flex;
+  flex-direction: row;
+  margin-left: var(--marginLeftB);
+  gap: var(--moviesGapB);
 }
-.navItem{
-    width: var(--moviesAndCastWidthB);
-    font-size: 20px; 
+.navItem {
+  width: var(--moviesAndCastWidthB);
+  font-size: 20px;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.5;
+  color: #333;
+  vertical-align: middle;
+  padding: 2px 5px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  appearance: none; /* Removes default dropdown arrow in some browsers */
+  cursor: pointer;
+  background-color: white;
+}
+
+@media (max-width: 767px) {
+  #navBar {
+    display: flex;
+    flex-direction: row;
+    margin-left: var(--marginLeftS);
+    gap: var(--moviesGapS);
+  }
+  .navItem {
+    width: var(--moviesAndCastWidthS);
+    font-size: 12px;
     text-align: center;
     display: inline-block;
     line-height: 1.5;
@@ -20,31 +45,5 @@
     appearance: none; /* Removes default dropdown arrow in some browsers */
     cursor: pointer;
     background-color: white;
-}
-
-
-@media (max-width: 767px) {
-    #navBar{
-        display:flex;
-        flex-direction:row;
-        margin-left: var(--marginLeftS);
-        gap:var(--moviesGapS);
-    }
-    .navItem{
-        width: var(--moviesAndCastWidthS);
-        font-size: 12px; 
-        text-align: center;
-        display: inline-block;
-        line-height: 1.5;
-        color: #333;
-        vertical-align: middle;
-        padding: 2px 5px;
-        margin: 0;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        appearance: none; /* Removes default dropdown arrow in some browsers */
-        cursor: pointer;
-        background-color: white;
-    }
+  }
 }

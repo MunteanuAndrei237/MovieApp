@@ -1,67 +1,62 @@
-import { useSelector , useDispatch } from "react-redux";
-import { fetchMoviesByTermThunk } from "../slices/searchSlice.js";
-import { addLoadedMovie } from "../slices/loadedSlice.js";
-import { useParams } from "react-router-dom";
-import { useEffect , useRef } from "react";
-import { isUserNearBottom , loadMoreTimeout } from "../assets/scrolling.js";
-import { resetSearchToIdle  } from "../slices/searchSlice.js";
 import Grid from "./GridComponent.js";
+import { useEffect, forwardRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { fetchMoviesByTermThunk } from "../slices/searchSlice.js";
+import { addMovieToLocation } from "../slices/loadedSlice.js";
+import { resetSearchToIdle } from "../slices/searchSlice.js";
 
-const SearchResultComponent = () => {
-    const term = useParams().term;
-    const dispatch = useDispatch();
-    const searchState = useSelector(state => state.search);
-    const canRequestMoreRef = useRef(true);
+const SearchResultComponent = forwardRef((_, requestMoreFunctionRef) => {
+  const dispatch = useDispatch();
+  const searchState = useSelector((state) => state.search);
+  const term = useParams().term;
 
-    function requestMore() {
-      if (canRequestMoreRef.current && searchState.searchStatus !== "failed" && 
-      (searchState.searchTotalPages[term]=== undefined || searchState.searchPage[term] <= searchState.searchTotalPages[term])) 
-      {
+  //fetch movies by term
+  useEffect(() => {
+    if (searchState.searchPage[term] === undefined)
+      dispatch(fetchMoviesByTermThunk(term));
+  }, [dispatch, term]);
+
+  //if movies were fetched, add them to loaded movies state
+  useEffect(() => {
+    if (searchState.searchStatus === "succeeded") {
+      dispatch(
+        addMovieToLocation({
+          movies: searchState.searchMovies,
+          location: term,
+          useTerm: true,
+        }),
+      );
+      dispatch(resetSearchToIdle());
+    }
+  }, [searchState.searchStatus]);
+
+  //modify the scrollingRef to a function that fetches more movies by term, then reset it to null when component unmounts
+  useEffect(() => {
+    requestMoreFunctionRef.current = () => {
+      if (
+        searchState.searchStatus !== "failed" &&
+        (searchState.searchTotalPages[term] === undefined ||
+          searchState.searchPage[term] <= searchState.searchTotalPages[term])
+      )
         dispatch(fetchMoviesByTermThunk(term));
-        canRequestMoreRef.current = false;
-        setTimeout(() => {
-          canRequestMoreRef.current = true;
-        }, loadMoreTimeout); 
-      }
-    }
-  
-    function handleScroll() {
-        
-      if (isUserNearBottom()) {
-        requestMore();
-      }
-    }
-  
-    useEffect(() => {
-      window.addEventListener('scroll', handleScroll);
-      return ()=>{window.removeEventListener('scroll', handleScroll);}
-    }, [requestMore,term]);
+    };
+    return () => (requestMoreFunctionRef.current = null);
+  }, [dispatch, term, searchState.searchStatus]);
 
-
-    useEffect(() => {
-      if(searchState.searchPage[term] === undefined)
-        dispatch(fetchMoviesByTermThunk(term));
-    }, [dispatch,term])
-
-    useEffect(() => {
-        if(searchState.searchStatus === "succeeded")
-         {
-           dispatch(addLoadedMovie({movies:searchState.searchMovies,location:term,useTerm:true}));
-           dispatch(resetSearchToIdle());
-         }
-      }, [searchState.searchStatus]);
-        
-    
-        return (
-          <div>        
-            <Grid location={"term="+term}/>
-            {searchState.searchStatus === 'loading' ? <h1 className="loading">Loading movies</h1> :
-            searchState.searchStatus === 'failed' ? <div className="error"><h1>We ecnountered an error</h1><p>{searchState.searchError} </p></div> : null}
-            
-            
-            </div>
-        )
-    }
-
+  return (
+    <div>
+      <Grid location={"term=" + term} />
+      {searchState.searchStatus === "loading" ? (
+        <h1 className="loading">Loading movies</h1>
+      ) : searchState.searchStatus === "failed" ? (
+        <div className="error">
+          <h1>We ecnountered an error</h1>
+          <p>{searchState.searchError} </p>
+        </div>
+      ) : null}
+    </div>
+  );
+});
 
 export default SearchResultComponent;
