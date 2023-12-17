@@ -25,11 +25,9 @@ const SearchBarComponent = () => {
         return (
           <div id="searchBarConatiner">
             <div id="searchDiv">
-
                 <FaTrashAlt className="reactIcons" onClick={()=>dispatch(changeSearchTerm(""))}/>
                 <input id="searchInput" placeholder="Enter movie name here" type="text" value={searchSliceState.searchTerm} onChange={e=>dispatch(changeSearchTerm(e.target.value))}/>
                 <FaSearch className="reactIcons" onClick={()=>navigate('/search/'+searchSliceState.searchTerm)}/>
-                
             </div>
           </div>
         )

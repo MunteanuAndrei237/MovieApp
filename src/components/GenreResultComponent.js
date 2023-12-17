@@ -54,9 +54,9 @@ const SearchGenreResultComponent =()=> {
     return(
         <div>
         <Grid location={genreId}/>
-        {genresSliceState.moviesStatus === 'loading' ? <p>loading...</p> :
+        {genresSliceState.moviesStatus === 'loading' ? <h1 className="loading">Loading movies<div className="loading-spinner"/></h1> :
         genresSliceState.moviesStatus === 'failed' ?     
-            <div>
+            <div className="error">
             <h1>We ecnountered an error</h1>
             <p>{genresSliceState.moviesError} </p>
             </div> : null}

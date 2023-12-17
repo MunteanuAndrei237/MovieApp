@@ -30,7 +30,7 @@ const HomeComponent = () => {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return ()=>{window.removeEventListener('scroll', handleScroll);}
-  }, [requestMore]);
+  }, [handleScroll]);
 
   useEffect(() => {
     if(homeSliceState.homePage === 1)
@@ -47,8 +47,8 @@ const HomeComponent = () => {
   return (
     <div>
       <Grid location={"home"}/>
-      {homeSliceState.homeStatus === 'loading' ? <p>loading...</p> :
-        homeSliceState.homeStatus === 'failed' ? <div><h1>We encountered an error</h1><p>{homeSliceState.homeError}</p></div> :
+      {homeSliceState.homeStatus === 'loading' ? <h1 className="loading">Loading movies<div className="loading-spinner"/></h1> :
+        homeSliceState.homeStatus === 'failed' ? <div className="error"><h1>We encountered an error</h1><p>{homeSliceState.homeError}</p></div> :
           null}
 
     </div>

@@ -1,7 +1,6 @@
 import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
 const fetchMoviesByGenreThunk = createAsyncThunk("genres/fetchMoviesByGenreThunk", async (genreId , { getState }) => {
-
     try{
         const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page='+ getState().genres.genresPage[genreId] + '&sort_by=popularity.desc&with_genres='+genreId;
         const options = getOptions;

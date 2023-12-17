@@ -8,7 +8,7 @@ const SelectGenreComponent = () =>
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const genreId = isNaN(Number(location.pathname.split('/')[2])) || location.pathname.split('/')[1]!="genres" ? "default" : Number(location.pathname.split('/')[2]);
+  const genreId = isNaN(Number(location.pathname.split('/')[2])) || location.pathname.split('/')[1]!=="genres" ? "default" : Number(location.pathname.split('/')[2]);
   const genresState = useSelector(state => state.genres);
   useEffect(() => {
         dispatch(fetchGenresThunk());

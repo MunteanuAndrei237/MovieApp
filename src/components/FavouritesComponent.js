@@ -7,8 +7,8 @@ const FavouriesComponent = () => {
     return (   
         favoritesState.favouritesStatus === 'succeeded' ?
         <Grid location={"favourites"}/>
-        : favoritesState.favouritesStatus === 'loading' ? <p>loading...</p> : 
-        favoritesState.favouritesStatus === 'failed' ? <div><h3>we encountered an error</h3><p>{favoritesState.favouritesError}</p></div> : null
+        : favoritesState.favouritesStatus === 'loading' ? <h1 className="loading">Loading favourite movies <div className="loading-spinner"/></h1> : 
+        favoritesState.favouritesStatus === 'failed' ? <div className="error"><h1>We encountered an error</h1><p>{favoritesState.favouritesError}</p></div> : null
     );
 }
 

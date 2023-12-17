@@ -10,12 +10,12 @@ import Grid from "./GridComponent.js";
 const SearchResultComponent = () => {
     const term = useParams().term;
     const dispatch = useDispatch();
-    const searchSliceState = useSelector(state => state.search);
+    const searchState = useSelector(state => state.search);
     const canRequestMoreRef = useRef(true);
 
     function requestMore() {
-      if (canRequestMoreRef.current && searchSliceState.searchStatus !== "failed" && 
-      (searchSliceState.searchTotalPages[term]=== undefined || searchSliceState.searchPage[term] <= searchSliceState.searchTotalPages[term])) 
+      if (canRequestMoreRef.current && searchState.searchStatus !== "failed" && 
+      (searchState.searchTotalPages[term]=== undefined || searchState.searchPage[term] <= searchState.searchTotalPages[term])) 
       {
         dispatch(fetchMoviesByTermThunk(term));
         canRequestMoreRef.current = false;
@@ -39,24 +39,24 @@ const SearchResultComponent = () => {
 
 
     useEffect(() => {
-      if(searchSliceState.searchPage[term] === undefined)
+      if(searchState.searchPage[term] === undefined)
         dispatch(fetchMoviesByTermThunk(term));
     }, [dispatch,term])
 
     useEffect(() => {
-        if(searchSliceState.searchStatus === "succeeded")
+        if(searchState.searchStatus === "succeeded")
          {
-           dispatch(addLoadedMovie({movies:searchSliceState.searchMovies,location:term,useTerm:true}));
+           dispatch(addLoadedMovie({movies:searchState.searchMovies,location:term,useTerm:true}));
            dispatch(resetSearchToIdle());
          }
-      }, [searchSliceState.searchStatus]);
+      }, [searchState.searchStatus]);
         
     
         return (
           <div>        
             <Grid location={"term="+term}/>
-            {searchSliceState.searchStatus === 'loading' ? <p>loading...</p> :
-            searchSliceState.searchStatus === 'failed' ? <div><h1>We ecnountered an error</h1><p>{searchSliceState.error} </p></div> : null}
+            {searchState.searchStatus === 'loading' ? <h1 className="loading">Loading movies</h1> :
+            searchState.searchStatus === 'failed' ? <div className="error"><h1>We ecnountered an error</h1><p>{searchState.searchError} </p></div> : null}
             
             
             </div>

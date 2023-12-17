@@ -21,9 +21,9 @@ const DetailsComponent = ({ movieId }) => {
     }, [dispatch, detailsState.detailsStatus, movieId]);
 
     return (
-        detailsState.detailsStatus === 'loading' ? <p>loading...</p> :
+        detailsState.detailsStatus === 'loading' ? <h1 className='loading'>Loading details<div className="loading-spinner"/></h1> :
         detailsState.detailsStatus === 'failed' ?
-            <div>
+            <div className='error'>
                 <h1>We ecnountered an error</h1>
                 <p>{detailsState.detailsError} </p>
             </div>  :
@@ -32,7 +32,7 @@ const DetailsComponent = ({ movieId }) => {
                 if (movie.id === movieId  && movie.detailsFetched === true) {
                     return (
                         <div className="movieSpecs" key={movie.id}>
-                            <img className="movieImage" src={"https://image.tmdb.org/t/p/w780/" + movie.poster_path} />
+                            <img className="movieImage" src={movie.poster_path !== null ? "https://image.tmdb.org/t/p/w780/" + movie.poster_path : "/noSource.jpg"} />
                             <div>
                                 <div className='titleAndStar'>
                                 <h1 className="movieTitle">{movie.title}</h1>

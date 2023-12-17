@@ -20,7 +20,6 @@ function App() {
   const dispatch = useDispatch();
   const favouritesState = useSelector(state => state.favourites);
   const userState = useSelector(state => state.user);
-  const loadedState = useSelector(state => state.loaded);
   useEffect(() => {
     dispatch(generateTokenThunk());
   }, [])
@@ -56,16 +55,18 @@ function App() {
 
   return (
     <div className="App">
-      {userState.tokenState === "loading" ? <p>generating token...</p> :
-        userState.tokenState === "failed" ? <div><h6>We encountered an error generating the token .Try later or refresh the page</h6><p>{userState.tokenError}</p></div> :
-      userState.sessionState === "loading" ? <p>vatrying to validate session...</p> :
-        userState.sessionState === "failed" ? <div><h3>Please validate the session first. If no tabs were opened , validate the session on the following link: 
-         <br></br> <a href={"https://www.themoviedb.org/authenticate/"+ userState.token}>{"https://www.themoviedb.org/authenticate/" + userState.token }</a></h3><p>{userState.sessionError}</p></div> :
-      userState.userState === "loading"  ? <p>loading user details...</p>
-        : userState.userState === "failed" ? <div><h1>We encountered an error loading your user details. Refresh the page and try again </h1><p>{userState.userError}</p></div> :
+      
+      <HeaderComponent />
+      {userState.tokenState === "loading" ? <h1 className='loading'>Generating token<div className="loading-spinner"/></h1> :
+        userState.tokenState === "failed" ? <div className="error"><h1>We encountered an error generating the token. Check connection and try again.</h1><p>{userState.tokenError}</p></div> :
+      userState.sessionState === "loading" ? <h1 className='loading'> Trying to validate session<div className="loading-spinner"/></h1> :
+        userState.sessionState === "failed" ? <div className="error"><h1>Please validate the token first. If no tabs were opened , validate the token on the following link: 
+         <br></br> <a href={"https://www.themoviedb.org/authenticate/"+ userState.token}>{"https://www.themoviedb.org/authenticate/" + userState.token }</a></h1><p>{userState.sessionError}</p></div> :
+      userState.userState === "loading"  ? <h1 className='loading'>Loading user details...<div className="loading-spinner"/></h1>
+        : userState.userState === "failed" ? <div className="error"><h1>We encountered an error loading your details. Make sure your acccount is verified and you replaced the access token and try again </h1><p>{userState.userError}</p></div> :
         userState.userState === "succeeded" ?
       <div>
-        <HeaderComponent />
+        
         <SearchBarComponent />
         <NavigationComponent />
         <Routes>
@@ -85,5 +86,5 @@ function App() {
 export default App;
 
 
-//                <button onClick={() => console.log(loadedState)}>print</button>
+//add this for debugging       cosnt loadedState = useSelector(state => state.loaded); <button onClick={() => console.log(loadedState)}>print</button>
 

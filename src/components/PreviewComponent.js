@@ -7,10 +7,10 @@ const PreviewComponent = ({ movie }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const favouritesState = useSelector(state => state.favourites);
-
     return (
         <div className="preview" onClick={() => { navigate('/movie/'+movie.id) }}>
-            <img className="moviePoster" src={"https://image.tmdb.org/t/p/w500" + movie.poster_path} />
+            
+            <img className="moviePoster"  src={movie.poster_path !==  null ? "https://image.tmdb.org/t/p/w500" + movie.poster_path : "/nosource.jpg"} />
             <div className="titleAndStar">
                 <h2 className="movieTitle">{movie.title}</h2> 
                 {favouritesState.favouritesStatus === 'succeeded' ?

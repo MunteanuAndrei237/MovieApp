@@ -19,17 +19,16 @@ const PhotosComponent = ({ movieId }) => {
     }, [dispatch, photosState.photosStatus, movieId]);
 
     return (
-        photosState.photosStatus === 'loading' ? <p>loading...</p> :
+        <div>
+            <h2 className="detailsSubTitle">Photos</h2>
+        {photosState.photosStatus === 'loading' ? <h1 className="loading">Loading phots<div className="loading-spinner"/></h1> :
             photosState.photosStatus === 'failed' ?
-                <div>
+                <div className="error">
                     <h1>We ecnountered an error</h1>
                     <p>{photosState.photosError} </p>
                 </div>
                 :
-                <div>
-                    <h2 className="detailsSubTitle">Photos</h2>
-
-                    {loadedState.loadedMovies.map((movie) => {
+                    loadedState.loadedMovies.map((movie) => {
                         if (movie.id === movieId && "photos" in movie) {
                             return (
                                 <div key={movieId}>
