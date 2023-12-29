@@ -3,11 +3,17 @@ Simple web application using React, Redux, and the TMDB API (https://developer.t
 To use this project locally, follow these steps:
 
 1.Clone the repository to your local project.
+
 2.Run 'npm install' to install the required node_modules.
+
 3.Create a TMDB account (https://www.themoviedb.org/signup) and generate an Access Token (https://developer.themoviedb.org/reference/intro/authentication).
+
 4.In /src/assets/accessToken.js, replace the existing Access Token with your own.
+
 5.Run 'npm run start' to start the application.
+
 6.Once the page is opened, you will be redirected to TMDB to validate the request token. After validation, you can navigate the page.
+
 
 If you encounter any issues, try deleting package-lock.json and running 'npm install' again.
 
