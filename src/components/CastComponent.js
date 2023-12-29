@@ -1,13 +1,27 @@
+//component that fetches and displays movie cast
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCast } from "../slices/loadedSlice";
-import { resetCastToIdle, showMoreCast } from "../slices/castSlice";
+import {
+  fetchCastThunk,
+  resetCastToIdle,
+  showMoreCast,
+} from "../slices/castSlice";
 import "../css/cast.css";
 
 const CastComponent = ({ movieId }) => {
   const dispatch = useDispatch();
   const castState = useSelector((state) => state.cast);
   const loadedState = useSelector((state) => state.loaded);
+
+  //fetch movie cast if they were not fetched
+  useEffect(() => {
+    if (
+      movieId in loadedState.loadedMovies &&
+      !("cast" in loadedState.loadedMovies[movieId])
+    )
+      dispatch(fetchCastThunk(movieId));
+  }, [dispatch, movieId, loadedState.loadedMovies]);
 
   //if cast was fetched, add it to loaded movies state
   useEffect(() => {
@@ -30,52 +44,49 @@ const CastComponent = ({ movieId }) => {
           <h1>We encountered an error</h1>
           <p>{castState.castError} </p>
         </div>
-      ) : (
-        loadedState.loadedMovies.map((movie) => {
-          if (movie.id === movieId && "cast" in movie) {
-            return movie.cast.length === 0 ? (
-              <h3 key="no-cast" style={{ textAlign: "center" }}>
-                Cast unavailable
+      ) : loadedState.loadedMovies[movieId] !== undefined &&
+        "cast" in loadedState.loadedMovies[movieId] ? (
+        loadedState.loadedMovies[movieId].cast.length === 0 ? (
+          <h3 key="no-cast" style={{ textAlign: "center" }}>
+            Cast unavailable
+          </h3>
+        ) : (
+          <div key="cast-container">
+            <div className="castContainer">
+              {loadedState.loadedMovies[movieId].cast
+                .slice(0, castState.castLoaded)
+                .map((character) => (
+                  <div key={character.id}>
+                    <img
+                      className="castImage"
+                      src={
+                        character.profile_path !== null
+                          ? "https://image.tmdb.org/t/p/w500/" +
+                            character.profile_path
+                          : "/nosource.jpg"
+                      }
+                      alt={character.name}
+                    />
+                    <h4>{character.name}</h4>
+                    <p>{character.character}</p>
+                  </div>
+                ))}
+            </div>
+            {loadedState.loadedMovies[movieId].cast.length >
+            castState.castLoaded ? (
+              <h3
+                key="show-more"
+                className="showMore"
+                onClick={() =>
+                  dispatch(showMoreCast(window.innerWidth < 767 ? 3 : 6))
+                }
+              >
+                Show more
               </h3>
-            ) : (
-              <div key="cast-container">
-                <div className="castContainer">
-                  {movie.cast
-                    .slice(0, castState.castLoaded)
-                    .map((character) => (
-                      <div key={character.id}>
-                        <img
-                          className="castImage"
-                          src={
-                            character.profile_path !== null
-                              ? "https://image.tmdb.org/t/p/w500/" +
-                                character.profile_path
-                              : "/nosource.jpg"
-                          }
-                          alt={character.name}
-                        />
-                        <h4>{character.name}</h4>
-                        <p>{character.character}</p>
-                      </div>
-                    ))}
-                </div>
-                {movie.cast.length > castState.castLoaded ? (
-                  <h3
-                    key="show-more"
-                    className="showMore"
-                    onClick={() =>
-                      dispatch(showMoreCast(window.innerWidth < 767 ? 3 : 6))
-                    }
-                  >
-                    Show more
-                  </h3>
-                ) : null}
-              </div>
-            );
-          }
-          return null;
-        })
-      )}
+            ) : null}
+          </div>
+        )
+      ) : null}
     </div>
   );
 };

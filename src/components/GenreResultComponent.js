@@ -1,3 +1,4 @@
+//component that renders the grid component with the movies of selected genre(/genres/:genreId)
 import Grid from "./GridComponent.js";
 import { useEffect, forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,7 +12,7 @@ const SearchGenreResultComponent = forwardRef((_, requestMoreFunctionRef) => {
   const genreId = useParams().genreId;
   const genresSliceState = useSelector((state) => state.genres);
 
-  //modify the selected gnre based on the url parameter
+  //modify the selected genre based on the url parameter
   useEffect(() => {
     dispatch(selectGenre(genreId));
     return () => {
@@ -19,11 +20,12 @@ const SearchGenreResultComponent = forwardRef((_, requestMoreFunctionRef) => {
     };
   }, [dispatch, genreId]);
 
-  //fetch movies by genre
+  //fetch movies by genre when genres are fetched
   useEffect(() => {
-    if (genresSliceState.genresPage[genreId] === 1)
-      dispatch(fetchMoviesByGenreThunk(genreId));
-  }, [dispatch, genreId]);
+    if(genresSliceState.genresStatus === "succeeded")
+      if (genresSliceState.genresPage[genreId] === 1)
+          dispatch(fetchMoviesByGenreThunk(genreId));
+  }, [dispatch, genreId,genresSliceState.genresStatus]);
 
   //if movies were fetched, add them to loaded movies state
   useEffect(() => {

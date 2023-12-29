@@ -1,3 +1,4 @@
+//global store containing all the slices
 import { configureStore } from "@reduxjs/toolkit";
 import loadedSlice from "../slices/loadedSlice.js";
 import genresSlice from "../slices/genresSlice.js";

@@ -1,3 +1,4 @@
+//component that fetches home movies and renders the grid component containing them(/home)
 import Grid from "./GridComponent.js";
 import { useEffect, forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,7 +9,6 @@ import { resetHomeToIdle } from "../slices/homeSlice.js";
 const HomeComponent = forwardRef((_, requestMoreFunctionRef) => {
   const dispatch = useDispatch();
   const homeSliceState = useSelector((state) => state.home);
-
   //fetch home movies
   useEffect(() => {
     if (homeSliceState.homePage === 1) dispatch(fetchHomeMoviesThunk());

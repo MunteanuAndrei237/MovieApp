@@ -1,3 +1,4 @@
+//component for the header of the app, contains the title and the user info
 import { useSelector } from "react-redux";
 import "../css/header.css";
 

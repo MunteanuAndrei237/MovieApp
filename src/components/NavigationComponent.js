@@ -1,3 +1,4 @@
+//navigation bar component , contains links to home, favourites and genre select
 import SelectCategoryComponent from "./GenreSelectComponent.js";
 import { useNavigate } from "react-router-dom";
 import "../css/navigation.css";

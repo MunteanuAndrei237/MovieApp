@@ -1,3 +1,4 @@
+// component fetching the genres and displaying them in a select element
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

@@ -1,3 +1,4 @@
+//slice used for fetching and handling favourite movies
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import accessToken from "../assets/accessToken";
 const fetch = require("node-fetch");

@@ -1,3 +1,4 @@
+//main component of the app, it is responsible for rendering the header and body components. It also handles the token generation and session creation
 import HeaderComponent from "./components/HeaderComponent.js";
 import BodyComponent from "./components/BodyComponent.js";
 import { useEffect } from "react";
@@ -27,7 +28,7 @@ function App() {
   useEffect(() => {
     if (userState.tokenState === "succeeded") {
       const validateTokenInterval = setInterval(async () => {
-        let response = await dispatch(tryCreateSessionThunk(userState.token));
+        const response = await dispatch(tryCreateSessionThunk(userState.token));
         if (response.payload !== undefined)
           clearInterval(validateTokenInterval);
       }, checkForTokenActivationInterval);
@@ -64,10 +65,12 @@ function App() {
     favouritesState.favouritesStatus,
     favouritesState.favouritesMovies,
   ]);
-
+  const loadedState = useSelector(state => state.loaded); 
+  //render the head component , check for errors in token generation, session creation and user information fetching , then render the body component if everything is ok
   return (
     <div className="App">
       <HeaderComponent />
+      <button onClick={() => console.log(loadedState)}>print</button>
       {userState.tokenState === "loading" ? (
         <h1 className="loading">
           Generating token
@@ -124,4 +127,4 @@ function App() {
 
 export default App;
 
-//add this for debugging  const loadedState = useSelector(state => state.loaded); <button onClick={() => console.log(loadedState)}>print</button>
+//add this for debugging  

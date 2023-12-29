@@ -7,6 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import globalStore from "./assets/globalStore.js";
 import "./index.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
+// renders the app component wrapped in a provider containg the global store and a browser router
 root.render(
   <Provider store={globalStore}>
     <BrowserRouter>

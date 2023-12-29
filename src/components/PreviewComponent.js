@@ -1,3 +1,4 @@
+//component that shows a preview of a movie , used in the grid component
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";

@@ -1,3 +1,4 @@
+//component that fetches movies based on a search term and renders the grid component with the results(/search/:term)
 import Grid from "./GridComponent.js";
 import { useEffect, forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";

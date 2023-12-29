@@ -1,3 +1,4 @@
+//slice used for fetching and handling search results based on a term
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
 const fetch = require("node-fetch");

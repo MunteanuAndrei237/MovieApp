@@ -1,3 +1,4 @@
+//slice used for handling and fethcing user information , token creation and session creation
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import accessToken from "../assets/accessToken";
 import getOptions from "../assets/getOptions";

@@ -1,3 +1,4 @@
+//slice udes for fetching and handling reviews of a movie
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
 const fetch = require("node-fetch");

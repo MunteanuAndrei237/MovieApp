@@ -1,3 +1,4 @@
+//component that renders the grid component with the favourites movies(/favourites)
 import { useSelector } from "react-redux";
 import Grid from "./GridComponent.js";
 

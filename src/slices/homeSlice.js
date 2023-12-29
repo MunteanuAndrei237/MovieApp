@@ -1,3 +1,4 @@
+//slice used for fetching and handling popular movies displayed in home page
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import getOptions from "../assets/getOptions";
 const fetch = require("node-fetch");

@@ -1,24 +1,21 @@
+//slice used for storing all the movies and their details , it is used everywhere you see a movie
 import { createSlice } from "@reduxjs/toolkit";
 
 const loadedSlice = createSlice({
   name: "loaded",
   initialState: {
-    loadedMovies: [],
-    loadedMovieIds: [],
+    loadedMovies: {},
     addedState: "idle",
   },
   reducers: {
     changeFavouritesLocation(state, action) {
-      state.loadedMovies.forEach((loadedMovie) => {
-        if (loadedMovie.id === action.payload) {
-          if (loadedMovie.locations.indexOf("favourites") === -1)
-            loadedMovie.locations.push("favourites");
-          else
-            loadedMovie.locations = loadedMovie.locations.filter(
-              (location) => location !== "favourites",
-            );
-        }
-      });
+      const id = action.payload;
+      if (state.loadedMovies[id].locations.indexOf("favourites") === -1)
+        state.loadedMovies[id].locations.push("favourites");
+      else
+        state.loadedMovies[id].locations = state.loadedMovies[
+          id
+        ].locations.filter((location) => location !== "favourites");
     },
     addMovieToLocation(state, action) {
       const movies = action.payload.movies;
@@ -26,56 +23,39 @@ const loadedSlice = createSlice({
         var location = "term=" + action.payload.location;
       else location = action.payload.location;
       movies.forEach((movie) => {
-        if (state.loadedMovieIds.indexOf(movie.id) === -1) {
-          state.loadedMovies.push({ ...movie, locations: [location] });
-          state.loadedMovieIds.push(movie.id);
+        if (movie.id in state.loadedMovies && state.loadedMovies[movie.id].locations.indexOf(location) === -1) {
+          state.loadedMovies[" "+movie.id].locations.push(location);//here i am adding a space because JS sorts the object and I need to keep the order for when people load more movies/pages
         } else {
-          state.loadedMovies.forEach((loadedMovie) => {
-            if (
-              loadedMovie.id === movie.id &&
-              loadedMovie.locations.indexOf(location) === -1
-            )
-              loadedMovie.locations.push(location);
-          });
+          state.loadedMovies[" "+movie.id] = { ...movie, locations: [location] };
         }
       });
     },
     addEmptyMovie(state, action) {
       const id = action.payload.id;
-      state.loadedMovies.push({ id: id, locations: [] });
-      state.loadedMovieIds.push(id);
+      state.loadedMovies[id] = { locations: [] };
       state.addedState = "succedeeded";
     },
     addDetails(state, action) {
       const id = action.payload.id;
       const movieDetails = action.payload.details;
-      state.loadedMovies.forEach((loadedMovie) => {
-        if (loadedMovie.id === id) {
-          loadedMovie.detailsFetched = true;
-          for (const key in movieDetails) loadedMovie[key] = movieDetails[key];
-        }
-      });
+      state.loadedMovies[id].detailsFetched = true;
+      for (const key in movieDetails)
+        state.loadedMovies[id][key] = movieDetails[key];
     },
     addCast(state, action) {
       const id = action.payload.id;
       const movieCast = action.payload.cast;
-      state.loadedMovies.forEach((loadedMovie) => {
-        if (loadedMovie.id === id) loadedMovie.cast = movieCast;
-      });
+      state.loadedMovies[id].cast = movieCast;
     },
     addPhotos(state, action) {
       const id = action.payload.id;
       const moviePhotos = action.payload.photos;
-      state.loadedMovies.forEach((loadedMovie) => {
-        if (loadedMovie.id === id) loadedMovie.photos = moviePhotos;
-      });
+      state.loadedMovies[id].photos = moviePhotos;
     },
     addReviews(state, action) {
       const id = action.payload.id;
       const movieReviews = action.payload.reviews;
-      state.loadedMovies.forEach((loadedMovie) => {
-        if (loadedMovie.id === id) loadedMovie.reviews = movieReviews;
-      });
+      state.loadedMovies[id].reviews = movieReviews;
     },
   },
 });
