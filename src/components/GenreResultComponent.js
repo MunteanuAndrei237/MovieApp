@@ -22,10 +22,10 @@ const SearchGenreResultComponent = forwardRef((_, requestMoreFunctionRef) => {
 
   //fetch movies by genre when genres are fetched
   useEffect(() => {
-    if(genresSliceState.genresStatus === "succeeded")
+    if (genresSliceState.genresStatus === "succeeded")
       if (genresSliceState.genresPage[genreId] === 1)
-          dispatch(fetchMoviesByGenreThunk(genreId));
-  }, [dispatch, genreId,genresSliceState.genresStatus]);
+        dispatch(fetchMoviesByGenreThunk(genreId));
+  }, [dispatch, genreId, genresSliceState.genresStatus]);
 
   //if movies were fetched, add them to loaded movies state
   useEffect(() => {
