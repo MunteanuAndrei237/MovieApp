@@ -63,7 +63,7 @@ const CastComponent = ({ movieId }) => {
                         character.profile_path !== null
                           ? "https://image.tmdb.org/t/p/w500/" +
                             character.profile_path
-                          : "/nosource.jpg"
+                          : "/noSource.jpg"
                       }
                       alt={character.name}
                     />

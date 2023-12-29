@@ -22,7 +22,7 @@ const PreviewComponent = ({ movie }) => {
         src={
           movie.poster_path !== null
             ? "https://image.tmdb.org/t/p/w500" + movie.poster_path
-            : "/nosource.jpg"
+            : "/noSource.jpg"
         }
         alt="Media unavalabile"
       />
