@@ -21,13 +21,14 @@ const loadedSlice = createSlice({
       const movies = action.payload.movies;
       if (action.payload.useTerm === true)
         var location = "term=" + action.payload.location;
-      else location = action.payload.location; 
+      else location = action.payload.location;
       movies.forEach((movie) => {
-        if ( //here i am adding a space because JS sorts the object and I need to keep the order for when people load more movies/pages
-          (" "+movie.id) in state.loadedMovies &&
+        if (
+          //here i am adding a space because JS sorts the object and I need to keep the order for when people load more movies/pages
+          " " + movie.id in state.loadedMovies &&
           state.loadedMovies[" " + movie.id].locations.indexOf(location) === -1
         ) {
-          state.loadedMovies[" " + movie.id].locations.push(location); 
+          state.loadedMovies[" " + movie.id].locations.push(location);
         } else {
           state.loadedMovies[" " + movie.id] = {
             ...movie,
