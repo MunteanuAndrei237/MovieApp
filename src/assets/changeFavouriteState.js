@@ -9,7 +9,7 @@ function changeFavouriteState(movie, event, dispatch) {
       movieId: movie.id,
       favouriteState: movie.locations.indexOf("favourites") !== -1,
     }),
-  ).then(() => dispatch(changeFavouritesLocation(movie.id)));
+  ).then(() => dispatch(changeFavouritesLocation(" "+movie.id)));
 }
 
 export default changeFavouriteState;

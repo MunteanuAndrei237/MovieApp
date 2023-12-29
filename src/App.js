@@ -65,11 +65,12 @@ function App() {
     favouritesState.favouritesStatus,
     favouritesState.favouritesMovies,
   ]);
-
+     
   //render the head component , check for errors in token generation, session creation and user information fetching , then render the body component if everything is ok
   return (
     <div className="App">
       <HeaderComponent />
+      
       {userState.tokenState === "loading" ? (
         <h1 className="loading">
           Generating token
@@ -126,4 +127,4 @@ function App() {
 
 export default App;
 
-//add this for debugging  const loadedState = useSelector(state => state.loaded);       <button onClick={() => console.log(loadedState)}>print</button>
+//add this for debugging   const loadedState = useSelector(state => state.loaded);   <button onClick={() => console.log(loadedState)}>print</button>
